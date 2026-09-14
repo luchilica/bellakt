@@ -1,0 +1,6 @@
+{
+  "name": "Портал Беллакт",
+  "description": "Корпоративный портал сотрудников ОАО «Беллакт» (PWA)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
