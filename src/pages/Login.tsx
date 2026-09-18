@@ -67,7 +67,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#F0F4F9] via-[#F5F8FC] to-[#EDF2F7]">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#F0F4F9] via-[#F5F8FC] to-[#EDF2F7] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="mb-6 flex flex-col items-center text-center">
         <div className="mb-3 flex items-center justify-center">
           <img
@@ -79,24 +79,24 @@ export default function Login() {
             }}
           />
         </div>
-        <p className="text-sm text-slate-600 mt-1">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           Корпоративный портал сотрудников ОАО «Беллакт»
         </p>
       </div>
 
-      <Card className="w-full max-w-md shadow-xl rounded-2xl border border-slate-200/80 bg-white">
+      <Card className="w-full max-w-md shadow-xl rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
         <CardHeader className="pb-4 pt-6 text-center">
-          <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight">Вход в систему</CardTitle>
+          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Вход в систему</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold uppercase text-slate-600">Email или табельный номер</Label>
+              <Label htmlFor="email" className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400">Email или табельный номер</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="ivanov@bellakt.by"
-                className="rounded-xl h-11 border-slate-300 focus-visible:ring-[#002B7F]"
+                className="rounded-xl h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:ring-[#002B7F]"
                 {...register('email')}
               />
               {errors.email && (
@@ -106,12 +106,12 @@ export default function Login() {
             
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold uppercase text-slate-600">Пароль</Label>
+                <Label htmlFor="password" className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400">Пароль</Label>
               </div>
               <Input
                 id="password"
                 type="password"
-                className="rounded-xl h-11 border-slate-300 focus-visible:ring-[#002B7F]"
+                className="rounded-xl h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:ring-[#002B7F]"
                 {...register('password')}
               />
               {errors.password && (
@@ -121,7 +121,7 @@ export default function Login() {
 
             <Button
               type="submit"
-              className="w-full bg-[#002B7F] hover:bg-[#001E59] text-white font-semibold h-11 rounded-xl text-sm transition-all shadow-md hover:shadow-lg"
+              className="w-full bg-[#002B7F] hover:bg-[#0B4DA2] text-white font-semibold h-11 rounded-xl text-sm transition-colors shadow-xs cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -133,17 +133,17 @@ export default function Login() {
             
             <div className="relative my-3">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-200" />
+                <span className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-slate-400">Быстрый доступ</span>
+                <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 dark:text-slate-500">Быстрый доступ</span>
               </div>
             </div>
 
             <Button
               type="button"
               variant="secondary"
-              className="w-full h-11 rounded-xl text-sm bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 font-semibold"
+              className="w-full h-11 rounded-xl text-sm bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 font-semibold cursor-pointer"
               onClick={() => {
                 loginAsDemo();
                 toast.success('Авторизован как тестовый сотрудник');
@@ -155,7 +155,7 @@ export default function Login() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 rounded-xl text-sm text-slate-600 border-slate-200 hover:bg-slate-50"
+              className="w-full h-11 rounded-xl text-sm text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
               onClick={() => toast.info('Функция входа по QR-коду находится в разработке')}
             >
               Войти по QR-коду пропуска

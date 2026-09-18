@@ -117,16 +117,16 @@ export default function Certificates() {
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs shrink-0"
+            className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs shrink-0"
             title="Назад на главную"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Запрос справок
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
               Официальные справки о доходах и заработной плате
             </p>
           </div>
@@ -135,19 +135,19 @@ export default function Certificates() {
         {/* New Request Button & Modal */}
         <Button
           onClick={() => setIsDialogOpen(true)}
-          className="bg-[#002B7F] hover:bg-[#001D56] text-white rounded-xl px-4 py-2.5 font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+          className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl px-4 py-2.5 font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
         >
           <Plus className="w-4 h-4 stroke-[2.5px]" />
           <span>Запросить справку</span>
         </Button>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-md rounded-2xl bg-white border-slate-200 shadow-xl">
+          <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white shadow-xl">
             <DialogHeader>
-              <DialogTitle className="text-base font-bold text-slate-900">
+              <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
                 Заказ официальной справки
               </DialogTitle>
-              <DialogDescription className="text-xs sm:text-sm text-slate-600">
+              <DialogDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Срок формирования справки бухгалтерией предприятия составляет 1 рабочий день.
               </DialogDescription>
             </DialogHeader>
@@ -155,12 +155,12 @@ export default function Certificates() {
             <div className="space-y-4 py-2">
               {/* Fixed types list from spec */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-slate-800">Вид справки</Label>
+                <Label className="text-xs font-bold text-slate-800 dark:text-slate-200">Вид справки</Label>
                 <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger className="rounded-xl border-slate-200 text-xs sm:text-sm">
+                  <SelectTrigger className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white">
                     <SelectValue placeholder="Выберите вид справки" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-xl bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                     {FIXED_CERTIFICATE_TYPES.map((t) => (
                       <SelectItem key={t.id} value={t.id} className="text-xs sm:text-sm">
                         {t.label}
@@ -172,15 +172,15 @@ export default function Certificates() {
 
               {/* Receive method */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-slate-800">Способ получения</Label>
+                <Label className="text-xs font-bold text-slate-800 dark:text-slate-200">Способ получения</Label>
                 <Select
                   value={receiveMethod}
                   onValueChange={(val: any) => setReceiveMethod(val)}
                 >
-                  <SelectTrigger className="rounded-xl border-slate-200 text-xs sm:text-sm">
+                  <SelectTrigger className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white">
                     <SelectValue placeholder="Выберите способ получения" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-xl bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                     <SelectItem value="electronic">В электронном виде с ЭЦП (PDF)</SelectItem>
                     <SelectItem value="paper">Печатный оригинал в бухгалтерии (каб. 204)</SelectItem>
                   </SelectContent>
@@ -189,14 +189,14 @@ export default function Certificates() {
 
               {/* Optional note / purpose */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-slate-800">
-                  Место предоставления <span className="text-slate-500 font-normal">(опционально)</span>
+                <Label className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Место предоставления <span className="text-slate-500 dark:text-slate-400 font-normal">(опционально)</span>
                 </Label>
                 <Textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Например: В ОАО «АСБ Беларусбанк» для оформления кредита"
-                  className="rounded-xl border-slate-200 text-xs sm:text-sm min-h-[70px]"
+                  className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 min-h-[70px]"
                 />
               </div>
             </div>
@@ -206,11 +206,11 @@ export default function Certificates() {
                 type="button"
                 variant="secondary"
                 onClick={() => setIsDialogOpen(false)}
-                className="rounded-xl text-xs sm:text-sm font-semibold cursor-pointer"
+                className="rounded-xl text-xs sm:text-sm font-semibold cursor-pointer dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               >
                 Отмена
               </Button>
-              <Button onClick={submitRequest} className="bg-[#002B7F] hover:bg-[#001D56] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer">
+              <Button onClick={submitRequest} className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors">
                 Отправить в бухгалтерию
               </Button>
             </DialogFooter>
@@ -219,28 +219,28 @@ export default function Certificates() {
       </div>
 
       {/* Info Notice Banner */}
-      <div className="bg-[#E8F1FC] border border-blue-200 rounded-xl p-4 sm:p-5 flex items-start gap-3.5">
-        <Building2 className="w-5 h-5 text-[#002B7F] shrink-0 mt-0.5" />
-        <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-          <strong className="text-slate-900">Юридическая сила:</strong> Электронная справка с квалифицированной ЭЦП бухгалтера предприятия приравнивается к документу на бумажном носителе. Готовые электронные справки доступны для скачивания прямо из этого раздела.
+      <div className="bg-[#E8F1FC] dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-xl p-4 sm:p-5 flex items-start gap-3.5">
+        <Building2 className="w-5 h-5 text-[#002B7F] dark:text-blue-400 shrink-0 mt-0.5" />
+        <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          <strong className="text-slate-900 dark:text-white">Юридическая сила:</strong> Электронная справка с квалифицированной ЭЦП бухгалтера предприятия приравнивается к документу на бумажном носителе. Готовые электронные справки доступны для скачивания прямо из этого раздела.
         </div>
       </div>
 
       {/* List of Requests */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
             История ваших запросов ({requests.length})
           </h2>
         </div>
 
         <div className="space-y-3">
           {requests.map((item) => (
-            <Card key={item.id} className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+            <Card key={item.id} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
               <CardContent className="p-4 sm:p-5">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#E8F1FC] text-[#0B4DA2] flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
                       {item.status === 'ready' || item.status === 'issued' ? (
                         <FileCheck className="w-5 h-5" />
                       ) : (
@@ -249,17 +249,17 @@ export default function Certificates() {
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-bold text-sm sm:text-base text-slate-900">
+                        <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
                           {item.type}
                         </h3>
-                        <span className="text-xs font-mono text-slate-500 font-medium">
+                        <span className="text-xs font-mono text-slate-500 dark:text-slate-400 font-medium">
                           {item.id}
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                         Назначение: {item.purpose}
                       </p>
-                      <div className="text-xs text-slate-500 flex items-center gap-2">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>Подано: {item.createdAt}</span>
                         <span>•</span>
@@ -274,7 +274,7 @@ export default function Certificates() {
 
                   <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
                     {item.status === 'processing' && (
-                      <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-200">
+                      <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-200 dark:border-amber-800/60">
                         <Clock className="w-3.5 h-3.5" />
                         <span>В обработке</span>
                       </div>
@@ -282,7 +282,7 @@ export default function Certificates() {
 
                     {item.status === 'ready' && (
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-emerald-200">
+                        <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-emerald-200 dark:border-emerald-800/60">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Готова</span>
                         </div>
@@ -290,7 +290,7 @@ export default function Certificates() {
                           <Button
                             size="sm"
                             onClick={() => handleDownload(item)}
-                            className="rounded-lg bg-[#002B7F] hover:bg-[#001D56] text-white text-xs font-semibold h-8 cursor-pointer"
+                            className="rounded-lg bg-[#002B7F] hover:bg-[#0B4DA2] text-white text-xs font-semibold h-8 cursor-pointer transition-colors"
                           >
                             <Download className="w-3.5 h-3.5 mr-1.5" />
                             Скачать PDF
@@ -300,8 +300,8 @@ export default function Certificates() {
                     )}
 
                     {item.status === 'issued' && (
-                      <div className="flex items-center gap-1.5 text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />
+                      <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-700">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                         <span>Выдана на руки</span>
                       </div>
                     )}

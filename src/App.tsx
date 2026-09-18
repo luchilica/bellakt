@@ -5,6 +5,7 @@ import { Layout } from './components/layout/Layout';
 import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from './store/useAuthStore';
 import { LoadingScreen } from './components/LoadingScreen';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -34,27 +35,33 @@ export default function App() {
   }, [checkSession]);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <ThemeProvider>
+        <LoadingScreen />
+      </ThemeProvider>
+    );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/health" element={<HealthJournal />} />
-            <Route path="/canteen" element={<Canteen />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/certificates" element={<Certificates />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/payslip" element={<Payslip />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-      <Toaster position="top-center" />
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<Layout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/health" element={<HealthJournal />} />
+              <Route path="/canteen" element={<Canteen />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/certificates" element={<Certificates />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/payslip" element={<Payslip />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+        <Toaster position="top-center" />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

@@ -8,14 +8,12 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock,
-  Info,
   UtensilsCrossed,
   Receipt,
   X,
   CreditCard,
   QrCode,
   Calendar,
-  AlertCircle,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
@@ -201,18 +199,75 @@ const DISHES_DATABASE: Dish[] = [
   },
 ];
 
-// Weekdays Mon-Fri according to specification (canteen closed on weekends)
-const DAYS_LIST = [
-  { label: 'Пн, 07 Сен', date: '2026-09-07', isToday: false, isPast: true },
-  { label: 'Вт, 08 Сен', date: '2026-09-08', isToday: false, isPast: true },
-  { label: 'Ср, 09 Сен', date: '2026-09-09', isToday: false, isPast: true },
-  { label: 'Чт, 10 Сен', date: '2026-09-10', isToday: true, isPast: false },
-  { label: 'Пт, 11 Сен', date: '2026-09-11', isToday: false, isPast: false, isFuture: true },
-];
+export interface CanteenDayItem {
+  label: string;
+  date: string;
+  isToday: boolean;
+  isPast: boolean;
+}
+
+export function generateCanteenDays(): CanteenDayItem[] {
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const weekDayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const ruMonths = [
+    'Янв',
+    'Фев',
+    'Мар',
+    'Апр',
+    'Май',
+    'Июн',
+    'Июл',
+    'Авг',
+    'Сен',
+    'Окт',
+    'Ноя',
+    'Дек',
+  ];
+
+  const workdays: Date[] = [];
+  const cur = new Date(now);
+  cur.setHours(0, 0, 0, 0);
+
+  // If today is a weekend, shift back to Friday
+  if (cur.getDay() === 0) {
+    cur.setDate(cur.getDate() - 2);
+  } else if (cur.getDay() === 6) {
+    cur.setDate(cur.getDate() - 1);
+  }
+
+  // Collect the 5 most recent workdays (Mon-Fri) without weekends or future dates
+  while (workdays.length < 5) {
+    const day = cur.getDay();
+    if (day >= 1 && day <= 5) {
+      workdays.unshift(new Date(cur));
+    }
+    cur.setDate(cur.getDate() - 1);
+  }
+
+  return workdays.map((d) => {
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const isToday = dateStr === todayStr;
+    const isPast = dateStr < todayStr;
+    const label = `${weekDayNames[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')} ${ruMonths[d.getMonth()]}`;
+    return {
+      label,
+      date: dateStr,
+      isToday,
+      isPast,
+    };
+  });
+}
 
 export default function Canteen() {
   const { employeeData } = useAuthStore();
-  const [dayIndex, setDayIndex] = useState(3); // Default: Today (Thursday 10 Sep)
+  const [daysList] = useState<CanteenDayItem[]>(() => generateCanteenDays());
+  const [dayIndex, setDayIndex] = useState<number>(() => {
+    const list = generateCanteenDays();
+    const todayIdx = list.findIndex((d) => d.isToday);
+    return todayIdx !== -1 ? todayIdx : list.length - 1;
+  });
   const [activeCategory, setActiveCategory] = useState<string>('Все');
   const [cart, setCart] = useState<Record<string, number>>({
     d1: 1, // Pre-selected 1 borscht
@@ -225,10 +280,9 @@ export default function Canteen() {
   const [selectedShiftTime, setSelectedShiftTime] = useState('12:30 - 13:00 (Обед смены №1)');
   const [lastOrderNumber, setLastOrderNumber] = useState('ОБЕД-8821');
 
-  const currentDay = DAYS_LIST[dayIndex] || DAYS_LIST[3];
-  const isToday = currentDay.isToday;
-  const isPast = currentDay.isPast;
-  const isFuture = (currentDay as any).isFuture;
+  const currentDay = daysList[dayIndex] || daysList[daysList.length - 1];
+  const isToday = currentDay?.isToday;
+  const isPast = currentDay?.isPast;
 
   const filteredDishes =
     activeCategory === 'Все'
@@ -279,63 +333,38 @@ export default function Canteen() {
   return (
     <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-12">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 shrink-0">
           <Link
             to="/"
-            className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs shrink-0"
+            className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs shrink-0"
             title="Назад на главную"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Меню столовой
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium">
-              Комплексное питание столовой ОАО «Беллакт»
-            </p>
-          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
+            Меню столовой
+          </h1>
         </div>
 
         {/* Days of Week Switcher (Mon-Fri) */}
-        <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto">
-          {DAYS_LIST.map((item, idx) => (
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-x-auto max-w-full sm:max-w-fit">
+          {daysList.map((item, idx) => (
             <button
               key={item.date}
               type="button"
               onClick={() => setDayIndex(idx)}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 dayIndex === idx
                   ? 'bg-[#002B7F] text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {item.label}
-              {item.isToday && (
-                <span className="ml-1.5 text-[11px] font-bold px-1.5 py-0.5 bg-emerald-600 text-white rounded-md">
-                  сегодня
-                </span>
-              )}
             </button>
           ))}
         </div>
       </div>
-
-      {/* Notice Banner based on day */}
-      {isPast && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3 text-amber-900 text-xs sm:text-sm font-medium">
-          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-          <span>Архивное меню за прошедший день. Оформление предзаказа недоступно.</span>
-        </div>
-      )}
-
-      {isFuture && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3 text-[#002B7F] text-xs sm:text-sm font-medium">
-          <Info className="w-5 h-5 text-[#002B7F] shrink-0" />
-          <span>Предварительное меню на следующий рабочий день. Заказ откроется с 07:00.</span>
-        </div>
-      )}
 
       {/* Categories Bar */}
       <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1">
@@ -347,7 +376,7 @@ export default function Canteen() {
             className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === cat
                 ? 'bg-[#002B7F] text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {cat}
@@ -363,10 +392,10 @@ export default function Canteen() {
           return (
             <div
               key={dish.id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
             >
               <div>
-                <div className="relative h-40 w-full overflow-hidden bg-slate-100">
+                <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                   <img
                     src={dish.image}
                     alt={dish.name}
@@ -376,19 +405,19 @@ export default function Canteen() {
                   <div className="absolute top-2.5 left-2.5 bg-black/75 text-white text-xs font-semibold px-2 py-0.5 rounded-md">
                     {dish.weight}
                   </div>
-                  <div className="absolute top-2.5 right-2.5 bg-white text-[#002B7F] font-bold text-xs px-2.5 py-0.5 rounded-md shadow-2xs border border-slate-100">
+                  <div className="absolute top-2.5 right-2.5 bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 font-bold text-xs px-2.5 py-0.5 rounded-md shadow-2xs border border-slate-100 dark:border-slate-700">
                     {dish.price.toFixed(2)} руб.
                   </div>
                 </div>
 
                 <div className="p-4 space-y-2">
-                  <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2">
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
                     {dish.name}
                   </h3>
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {dish.ingredients}
                   </p>
-                  <div className="text-xs font-medium text-slate-600 bg-slate-50 border border-slate-100 px-2 py-1 rounded-md">
+                  <div className="text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 px-2 py-1 rounded-md">
                     {dish.kbju}
                   </div>
                 </div>
@@ -398,21 +427,21 @@ export default function Canteen() {
               <div className="p-4 pt-0">
                 {isToday ? (
                   inCartCount > 0 ? (
-                    <div className="flex items-center justify-between bg-[#E8F1FC] rounded-xl p-1 border border-blue-100">
+                    <div className="flex items-center justify-between bg-[#E8F1FC] dark:bg-blue-950/40 rounded-xl p-1 border border-blue-100 dark:border-blue-900/50">
                       <button
                         type="button"
                         onClick={() => removeFromCart(dish.id)}
-                        className="w-8 h-8 rounded-lg bg-white text-[#002B7F] hover:bg-slate-50 flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="font-bold text-sm text-[#002B7F]">
+                      <span className="font-bold text-sm text-[#002B7F] dark:text-blue-300">
                         {inCartCount} шт.
                       </span>
                       <button
                         type="button"
                         onClick={() => addToCart(dish.id)}
-                        className="w-8 h-8 rounded-lg bg-[#002B7F] text-white hover:bg-[#001E59] flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-[#002B7F] hover:bg-[#0B4DA2] text-white flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -420,7 +449,7 @@ export default function Canteen() {
                   ) : (
                     <Button
                       onClick={() => addToCart(dish.id)}
-                      className="w-full bg-[#002B7F] hover:bg-[#001D56] text-white rounded-xl text-xs sm:text-sm font-bold h-9 shadow-xs cursor-pointer"
+                      className="w-full bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold h-9 shadow-xs cursor-pointer transition-colors"
                     >
                       <Plus className="w-3.5 h-3.5 mr-1.5 stroke-[2.5px]" />
                       В обеденный талон
@@ -430,7 +459,7 @@ export default function Canteen() {
                   <Button
                     disabled
                     variant="secondary"
-                    className="w-full rounded-xl text-xs font-semibold h-9 opacity-60"
+                    className="w-full rounded-xl text-xs font-semibold h-9 opacity-60 dark:bg-slate-800 dark:text-slate-400"
                   >
                     Заказ недоступен
                   </Button>
@@ -443,51 +472,57 @@ export default function Canteen() {
 
       {/* Sticky Bottom Cart Bar (if items in cart and today) */}
       {isToday && totalCartCount > 0 && (
-        <div className="fixed bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 w-[92%] max-w-xl bg-[#002B7F] text-white rounded-2xl shadow-xl p-3 sm:p-4 z-40 flex items-center justify-between animate-in fade-in slide-in-from-bottom-4">
-          <div className="space-y-0.5">
-            <div className="text-xs text-blue-200 font-medium">
-              Выбрано: {totalCartCount} блюд(а) • Списание в счёт з/п
-            </div>
-            <div className="text-base sm:text-lg font-extrabold">
-              Итого: {totalCartPrice.toFixed(2)} руб.
+        <div className="fixed bottom-20 sm:bottom-24 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 pointer-events-none">
+          <div className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto">
+            <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto pointer-events-auto">
+              <div className="w-full bg-[#002B7F] dark:bg-blue-900/95 text-white rounded-2xl shadow-xl p-3.5 sm:p-4 flex items-center justify-between animate-in fade-in slide-in-from-bottom-4 border border-blue-700/50 backdrop-blur-xs">
+                <div className="space-y-0.5">
+                  <div className="text-xs text-blue-200 font-medium">
+                    Выбрано: {totalCartCount} блюд(а) • Списание в счёт з/п
+                  </div>
+                  <div className="text-base sm:text-lg font-extrabold">
+                    Итого: {totalCartPrice.toFixed(2)} руб.
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setIsOrderModalOpen(true)}
+                  className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-4 py-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                >
+                  Оформить заказ
+                </Button>
+              </div>
             </div>
           </div>
-          <Button
-            onClick={() => setIsOrderModalOpen(true)}
-            className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-4 py-2 text-xs sm:text-sm shadow-md cursor-pointer"
-          >
-            Оформить заказ
-          </Button>
         </div>
       )}
 
       {/* Order Confirmation Modal */}
       <Dialog open={isOrderModalOpen} onOpenChange={setIsOrderModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl bg-white p-5 border-slate-200 shadow-xl">
+        <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-900 p-5 border-slate-200 dark:border-slate-800 shadow-xl">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-slate-900">
+            <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
               Оформление предзаказа в столовой
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-slate-600">
+            <DialogDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Сумма будет списана с лицевого счёта сотрудника при начислении заработной платы.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             {/* Selected dishes breakdown */}
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1 divide-y divide-slate-100 text-xs sm:text-sm">
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
               {(Object.entries(cart) as [string, number][]).map(([id, count]) => {
                 const dish = DISHES_DATABASE.find((d) => d.id === id);
                 if (!dish) return null;
                 return (
                   <div key={id} className="flex justify-between items-center pt-2 first:pt-0">
                     <div>
-                      <div className="font-semibold text-slate-900">{dish.name}</div>
-                      <div className="text-slate-500 text-xs">
+                      <div className="font-semibold text-slate-900 dark:text-white">{dish.name}</div>
+                      <div className="text-slate-500 dark:text-slate-400 text-xs">
                         {count} × {dish.price.toFixed(2)} руб.
                       </div>
                     </div>
-                    <div className="font-bold text-slate-900">
+                    <div className="font-bold text-slate-900 dark:text-white">
                       {(dish.price * Number(count)).toFixed(2)} руб.
                     </div>
                   </div>
@@ -495,22 +530,22 @@ export default function Canteen() {
               })}
             </div>
 
-            <div className="border-t border-slate-100 pt-3 flex justify-between items-center">
-              <span className="font-bold text-sm text-slate-900">Итого к списанию:</span>
-              <span className="font-extrabold text-base text-[#002B7F]">
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-between items-center">
+              <span className="font-bold text-sm text-slate-900 dark:text-white">Итого к списанию:</span>
+              <span className="font-extrabold text-base text-[#002B7F] dark:text-blue-400">
                 {totalCartPrice.toFixed(2)} руб.
               </span>
             </div>
 
             {/* Shift & Employee Info */}
-            <div className="bg-slate-50 rounded-xl p-3 text-xs sm:text-sm space-y-1.5 border border-slate-200">
-              <div className="flex justify-between text-slate-600">
+            <div className="bg-slate-50 dark:bg-slate-800/70 rounded-xl p-3 text-xs sm:text-sm space-y-1.5 border border-slate-200 dark:border-slate-700">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Сотрудник:</span>
-                <strong className="text-slate-900 font-semibold">{employeeData?.full_name || 'Иванов И.И.'}</strong>
+                <strong className="text-slate-900 dark:text-white font-semibold">{employeeData?.full_name || 'Иванов И.И.'}</strong>
               </div>
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Способ оплаты:</span>
-                <strong className="text-slate-900 font-semibold">В счёт заработной платы</strong>
+                <strong className="text-slate-900 dark:text-white font-semibold">В счёт заработной платы</strong>
               </div>
             </div>
           </div>
@@ -519,13 +554,13 @@ export default function Canteen() {
             <Button
               variant="outline"
               onClick={() => setIsOrderModalOpen(false)}
-              className="rounded-xl text-xs sm:text-sm font-semibold"
+              className="rounded-xl text-xs sm:text-sm font-semibold border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
             >
               Отмена
             </Button>
             <Button
               onClick={handleOrderSubmit}
-              className="bg-[#002B7F] hover:bg-[#001D56] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer"
+              className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors"
             >
               Подтвердить заказ
             </Button>
@@ -535,26 +570,26 @@ export default function Canteen() {
 
       {/* QR Code Receipt Modal */}
       <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl bg-white p-6 border-slate-200 shadow-xl text-center">
-          <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-emerald-50">
+        <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 border-slate-200 dark:border-slate-800 shadow-xl text-center">
+          <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-emerald-50 dark:ring-emerald-900/30">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <DialogTitle className="text-lg font-bold text-slate-900">
+          <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
             Электронный талон на обед
           </DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm text-slate-600 mb-4">
+          <DialogDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">
             Предъявите QR-код на раздаче в столовой или на кассе
           </DialogDescription>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col items-center justify-center space-y-3">
+          <div className="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex flex-col items-center justify-center space-y-3">
             {/* Realistic QR Visual */}
-            <div className="w-40 h-40 bg-white p-2 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center">
+            <div className="w-40 h-40 bg-white p-2 rounded-xl border border-slate-200 dark:border-slate-600 shadow-2xs flex items-center justify-center">
               <QrCode className="w-32 h-32 text-[#002B7F]" />
             </div>
-            <div className="font-mono text-xs sm:text-sm font-bold text-slate-900">
+            <div className="font-mono text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
               Талон: {lastOrderNumber}
             </div>
-            <div className="text-xs text-slate-600 font-medium">
+            <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
               {employeeData?.full_name || 'Иванов Иван Иванович'} • Таб. № {employeeData?.tab_number || '20481'}
             </div>
           </div>
@@ -562,7 +597,7 @@ export default function Canteen() {
           <div className="mt-5">
             <Button
               onClick={() => setIsReceiptOpen(false)}
-              className="w-full bg-[#002B7F] hover:bg-[#001D56] text-white rounded-xl font-bold text-xs sm:text-sm py-2.5 cursor-pointer"
+              className="w-full bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl font-bold text-xs sm:text-sm py-2.5 cursor-pointer transition-colors"
             >
               Понятно
             </Button>

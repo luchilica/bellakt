@@ -81,9 +81,9 @@ export default function Dashboard() {
     <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 lg:space-y-8 my-auto">
       {/* Greeting Header */}
       <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-900 tracking-tight">
-          <span className="font-medium">Здравствуйте, </span>
-          <span className="font-bold">{userName}!</span>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-900 dark:text-white tracking-tight">
+          <span className="font-medium text-slate-900 dark:text-white">Здравствуйте, </span>
+          <span className="font-bold text-[#0B4DA2] dark:text-[#60A5FA]">{userName}!</span>
         </h1>
       </div>
 
@@ -95,32 +95,32 @@ export default function Dashboard() {
           className={cn(
             'group relative rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer overflow-hidden',
             !isCheckedIn
-              ? 'health-alert-pulse bg-gradient-to-r from-red-50/90 via-white to-red-50/90 border-2 border-red-400/80 hover:border-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]'
-              : 'bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200'
+              ? 'health-alert-pulse bg-gradient-to-r from-red-50/90 via-white to-red-50/90 dark:from-red-950/40 dark:via-slate-900 dark:to-red-950/40 border-2 border-red-400/80 dark:border-red-500/70 hover:border-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]'
+              : 'bg-white dark:bg-slate-900 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80'
           )}
         >
           {/* Subtle red shimmer sweep when not checked in */}
           {!isCheckedIn && (
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-300/35 to-transparent health-shimmer-sweep pointer-events-none rounded-2xl lg:rounded-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-300/35 dark:via-red-400/20 to-transparent health-shimmer-sweep pointer-events-none rounded-2xl lg:rounded-3xl" />
           )}
 
           <div
             className={cn(
               'w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105',
               !isCheckedIn
-                ? 'bg-red-100 text-red-600 ring-2 ring-red-300/60'
-                : 'bg-[#E8F1FC] text-[#0B4DA2]'
+                ? 'bg-red-100 dark:bg-red-950/70 text-red-600 dark:text-red-400 ring-2 ring-red-300/60 dark:ring-red-800/60'
+                : 'bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-300 border border-transparent dark:border-blue-800/40'
             )}
           >
             <HeartPulse className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
 
           <div className="flex-1 min-w-0 z-10">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               ЖУРНАЛ ЗДОРОВЬЯ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
-              Просмотр записей и аналитики
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
+              Отметка самочувствия и просмотр записей
             </div>
           </div>
         </Link>
@@ -128,17 +128,17 @@ export default function Dashboard() {
         {/* 2. МЕНЮ СТОЛОВОЙ */}
         <Link
           to="/canteen"
-          className="group bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
+          className="group bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
         >
-          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] flex items-center justify-center text-[#0B4DA2] shrink-0 transition-transform group-hover:scale-105">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0 transition-transform group-hover:scale-105">
             <UtensilsCrossed className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               МЕНЮ СТОЛОВОЙ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
-              Заказ блюд на сегодня
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
+              Просмотр и заказ блюд на сегодня
             </div>
           </div>
         </Link>
@@ -146,16 +146,16 @@ export default function Dashboard() {
         {/* 3. РАСЧЕТНЫЙ ЛИСТ */}
         <Link
           to="/payslip"
-          className="group bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
+          className="group bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
         >
-          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] flex items-center justify-center text-[#0B4DA2] shrink-0 transition-transform group-hover:scale-105">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0 transition-transform group-hover:scale-105">
             <Receipt className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               РАСЧЕТНЫЙ ЛИСТ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
               Начисления и удержания
             </div>
           </div>
@@ -164,16 +164,16 @@ export default function Dashboard() {
         {/* 4. ОКАЗАННЫЕ УСЛУГИ */}
         <Link
           to="/services"
-          className="group bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
+          className="group bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
         >
-          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] flex items-center justify-center text-[#0B4DA2] shrink-0 transition-transform group-hover:scale-105">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0 transition-transform group-hover:scale-105">
             <ClipboardList className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               ОКАЗАННЫЕ УСЛУГИ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
               Архив выполненных запросов
             </div>
           </div>
@@ -183,16 +183,16 @@ export default function Dashboard() {
         <button
           type="button"
           onClick={() => setIsNotificationsOpen(true)}
-          className="group relative bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 text-left cursor-pointer w-full"
+          className="group relative bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 text-left cursor-pointer w-full"
         >
-          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] flex items-center justify-center text-[#0B4DA2] shrink-0 transition-transform group-hover:scale-105">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0 transition-transform group-hover:scale-105">
             <Bell className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               УВЕДОМЛЕНИЯ И ВАКАНСИИ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
               Актуальные предложения
             </div>
           </div>
@@ -201,17 +201,17 @@ export default function Dashboard() {
         {/* 6. ЗАПРОС СПРАВКИ */}
         <Link
           to="/certificates"
-          className="group bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
+          className="group bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 2xl:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800/80 transition-all flex flex-row items-center gap-4 lg:gap-5 xl:gap-6 cursor-pointer"
         >
-          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] flex items-center justify-center text-[#0B4DA2] shrink-0 transition-transform group-hover:scale-105">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 rounded-2xl lg:rounded-3xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0 transition-transform group-hover:scale-105">
             <Landmark className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 stroke-[2.2px] lg:stroke-[2.5px]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-slate-900 text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
+            <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base lg:text-base xl:text-lg 2xl:text-xl tracking-tight uppercase leading-snug">
               ЗАПРОС СПРАВКИ
             </div>
-            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 font-normal mt-0.5 sm:mt-1">
-              О доходах и других справках
+            <div className="text-xs sm:text-sm lg:text-xs xl:text-sm 2xl:text-base text-slate-500 dark:text-slate-400 font-normal mt-0.5 sm:mt-1">
+              О доходах и другие справки
             </div>
           </div>
         </Link>
@@ -219,22 +219,22 @@ export default function Dashboard() {
 
       {/* Notifications & Vacancies Modal */}
       <Dialog open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-        <DialogContent className="max-w-2xl bg-white rounded-2xl p-0 overflow-hidden border-slate-100 shadow-xl">
-          <DialogHeader className="p-5 border-b border-slate-100 flex flex-row items-center justify-between">
-            <DialogTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-[#0B4DA2]" />
+        <DialogContent className="max-w-2xl bg-white dark:bg-slate-900 rounded-2xl p-0 overflow-hidden border-slate-100 dark:border-slate-800 shadow-xl">
+          <DialogHeader className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+            <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Bell className="w-5 h-5 text-[#0B4DA2] dark:text-blue-400" />
               Уведомления и Вакансии предприятия
             </DialogTitle>
           </DialogHeader>
 
           {/* Tabs header */}
-          <div className="flex border-b border-slate-100 px-5 pt-2 gap-4">
+          <div className="flex border-b border-slate-100 dark:border-slate-800 px-5 pt-2 gap-4">
             <button
               onClick={() => setActiveTab('news')}
               className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
                 activeTab === 'news'
-                  ? 'border-[#002B7F] text-[#002B7F]'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-[#002B7F] dark:border-blue-400 text-[#002B7F] dark:text-blue-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
               Новости и объявления
@@ -243,8 +243,8 @@ export default function Dashboard() {
               onClick={() => setActiveTab('vacancies')}
               className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
                 activeTab === 'vacancies'
-                  ? 'border-[#002B7F] text-[#002B7F]'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-[#002B7F] dark:border-blue-400 text-[#002B7F] dark:text-blue-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
               Открытые вакансии (3)
@@ -252,19 +252,19 @@ export default function Dashboard() {
           </div>
 
           {/* Body content */}
-          <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4 divide-y divide-slate-100">
+          <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4 divide-y divide-slate-100 dark:divide-slate-800">
             {activeTab === 'news' ? (
               news.length > 0 ? (
                 news.map((item) => (
                   <div key={item.id} className="pt-3 first:pt-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900">{item.title}</h4>
-                      <span className="text-[11px] text-slate-400">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">{item.title}</h4>
+                      <span className="text-[11px] text-slate-400 dark:text-slate-500">
                         {new Date(item.published_at).toLocaleDateString('ru-RU')}
                       </span>
                     </div>
                     {item.body && (
-                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                         {item.body}
                       </p>
                     )}
@@ -274,23 +274,23 @@ export default function Dashboard() {
                 <>
                   <div className="pt-2 first:pt-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                         Изменение графика работы столовой в праздничные дни
                       </h4>
-                      <span className="text-[11px] text-slate-400">05.09.2026</span>
+                      <span className="text-[11px] text-slate-400 dark:text-slate-500">05.09.2026</span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                       Столовая предприятия обслуживает сотрудников с 11:00 до 15:00. Комплексные обеды подаются по стандартному графику списания через электронный пропуск.
                     </p>
                   </div>
                   <div className="pt-3">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                         Открытие нового спортивного сезона в ФОК
                       </h4>
-                      <span className="text-[11px] text-slate-400">02.09.2026</span>
+                      <span className="text-[11px] text-slate-400 dark:text-slate-500">02.09.2026</span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                       Сотрудникам Волковысского ОАО «Беллакт» предоставляются льготные абонементы на бассейн и тренажёрный зал в ФОК «Волна».
                     </p>
                   </div>
@@ -303,26 +303,26 @@ export default function Dashboard() {
                   return (
                     <div key={item.id} className="pt-3 first:pt-0 space-y-2">
                       <div className="flex items-center justify-between gap-2">
-                        <h4 className="font-bold text-sm text-slate-900">{item.title}</h4>
-                        <span className="text-[10px] uppercase font-bold bg-blue-50 text-[#002B7F] px-2 py-0.5 rounded-md">
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-white">{item.title}</h4>
+                        <span className="text-[10px] uppercase font-bold bg-blue-50 dark:bg-blue-950/60 text-[#002B7F] dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 px-2 py-0.5 rounded-md">
                           Внутренний конкурс
                         </span>
                       </div>
                       {item.body && (
-                        <p className="text-xs text-slate-600 leading-relaxed">
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                           {item.body}
                         </p>
                       )}
                       <div className="flex justify-end pt-1">
                         {isApplied ? (
-                          <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                          <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
                             ✓ Отклик отправлен в ОК
                           </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => handleApplyVacancy(item.title, item.id)}
-                            className="bg-[#002B7F] hover:bg-[#001D56] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
+                            className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
                           >
                             Откликнуться
                           </button>
@@ -335,26 +335,26 @@ export default function Dashboard() {
                 <>
                   <div className="pt-2 first:pt-0 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                         Инженер-технолог молочного производства
                       </h4>
-                      <span className="text-[10px] uppercase font-bold bg-blue-50 text-[#002B7F] px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] uppercase font-bold bg-[#D6E6F9] dark:bg-[#002B7F]/40 text-[#002B7F] dark:text-[#D6E6F9] border border-[#0B4DA2]/20 px-2 py-0.5 rounded-md">
                         Цех детского питания
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                       Опыт работы от 2 лет, профильное высшее образование. Сменный график, расширенный соцпакет ОАО «Беллакт».
                     </p>
                     <div className="flex justify-end pt-1">
                       {appliedVacancies['vac-1'] ? (
-                        <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
                           ✓ Отклик отправлен в ОК
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleApplyVacancy('Инженер-технолог молочного производства', 'vac-1')}
-                          className="bg-[#002B7F] hover:bg-[#001D56] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
+                          className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
                         >
                           Откликнуться
                         </button>
@@ -364,26 +364,26 @@ export default function Dashboard() {
 
                   <div className="pt-3 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                         Экономист в отдел снабжения и сбыта
                       </h4>
-                      <span className="text-[10px] uppercase font-bold bg-blue-50 text-[#002B7F] px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] uppercase font-bold bg-[#D6E6F9] dark:bg-[#002B7F]/40 text-[#002B7F] dark:text-[#D6E6F9] border border-[#0B4DA2]/20 px-2 py-0.5 rounded-md">
                         Управление
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                       Полный рабочий день, знание 1С:Предприятие 8. Социальный пакет и надбавки предприятия.
                     </p>
                     <div className="flex justify-end pt-1">
                       {appliedVacancies['vac-2'] ? (
-                        <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
                           ✓ Отклик отправлен в ОК
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleApplyVacancy('Экономист в отдел снабжения и сбыта', 'vac-2')}
-                          className="bg-[#002B7F] hover:bg-[#001D56] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
+                          className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs"
                         >
                           Откликнуться
                         </button>

@@ -126,30 +126,30 @@ export default function Payslip() {
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs shrink-0"
+            className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs shrink-0"
             title="Назад на главную"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Расчётный лист
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
               Начисления и удержания за выбранный период
             </p>
           </div>
         </div>
 
         {/* Period Selector */}
-        <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
-          <Calendar className="w-4 h-4 text-[#002B7F]" />
-          <span className="text-xs font-bold text-slate-700">Период:</span>
+        <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+          <Calendar className="w-4 h-4 text-[#002B7F] dark:text-blue-400" />
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Период:</span>
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[160px] h-8 rounded-lg border-slate-200 text-xs font-semibold">
+            <SelectTrigger className="w-[160px] h-8 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white">
               <SelectValue placeholder="Выберите месяц" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl">
+            <SelectContent className="rounded-xl bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
               <SelectItem value="2026-08">Август 2026</SelectItem>
               <SelectItem value="2026-07">Июль 2026</SelectItem>
               <SelectItem value="2026-06">Июнь 2026</SelectItem>
@@ -159,31 +159,31 @@ export default function Payslip() {
       </div>
 
       {/* Employee Info Strip */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm shadow-2xs">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm shadow-2xs">
         <div>
-          <span className="text-slate-600">Сотрудник: </span>
-          <strong className="text-slate-900 font-semibold">{employeeData?.full_name || 'Иванов Иван Иванович'}</strong>
-          <span className="text-slate-600 ml-2">• Таб. №: </span>
-          <strong className="font-mono text-slate-900 font-bold">{employeeData?.tab_number || '20481'}</strong>
+          <span className="text-slate-600 dark:text-slate-400">Сотрудник: </span>
+          <strong className="text-slate-900 dark:text-white font-semibold">{employeeData?.full_name || 'Иванов Иван Иванович'}</strong>
+          <span className="text-slate-600 dark:text-slate-400 ml-2">• Таб. №: </span>
+          <strong className="font-mono text-slate-900 dark:text-white font-bold">{employeeData?.tab_number || '20481'}</strong>
         </div>
         <div>
-          <span className="text-slate-600">Должность: </span>
-          <strong className="text-slate-900 font-semibold">{employeeData?.position || 'Инженер-технолог'}</strong>
+          <span className="text-slate-600 dark:text-slate-400">Должность: </span>
+          <strong className="text-slate-900 dark:text-white font-semibold">{employeeData?.position || 'Инженер-технолог'}</strong>
         </div>
       </div>
 
       {/* Main Total Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-6">
         {/* 1. To Pay */}
-        <Card className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
           <CardContent className="p-5 flex flex-col justify-center items-center text-center h-full">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
               К выдаче на карту
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold text-[#002B7F] mt-1.5">
-              {currentData.toPay.toFixed(2)} <span className="text-sm font-semibold text-slate-600">руб.</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-[#002B7F] dark:text-blue-400 mt-1.5">
+              {currentData.toPay.toFixed(2)} <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">руб.</span>
             </div>
-            <span className="text-xs text-emerald-700 font-semibold mt-1 flex items-center gap-1">
+            <span className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mt-1 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
               ОАО «АСБ Беларусбанк»
             </span>
@@ -191,30 +191,30 @@ export default function Payslip() {
         </Card>
 
         {/* 2. Total Accrued */}
-        <Card className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
           <CardContent className="p-5 flex flex-col justify-center items-center text-center h-full">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
               Всего начислено
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1.5">
-              +{currentData.accrued.toFixed(2)} <span className="text-sm font-semibold text-slate-600">руб.</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1.5">
+              +{currentData.accrued.toFixed(2)} <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">руб.</span>
             </div>
-            <span className="text-xs text-slate-500 font-medium mt-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
               Оклад, премии, ночные, надбавки
             </span>
           </CardContent>
         </Card>
 
         {/* 3. Total Deducted */}
-        <Card className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
           <CardContent className="p-5 flex flex-col justify-center items-center text-center h-full">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
               Всего удержано
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-700 mt-1.5">
-              -{currentData.deducted.toFixed(2)} <span className="text-sm font-semibold text-slate-600">руб.</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-700 dark:text-slate-200 mt-1.5">
+              -{currentData.deducted.toFixed(2)} <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">руб.</span>
             </div>
-            <span className="text-xs text-slate-500 font-medium mt-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
               Налоги 13%, ФСЗН 1%, профсоюз, столовая, аванс
             </span>
           </CardContent>
@@ -224,26 +224,26 @@ export default function Payslip() {
       {/* Details columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Accruals List */}
-        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
               Начисления ({currentData.accruals.length})
             </h3>
-            <span className="text-xs font-bold text-slate-900">
+            <span className="text-xs font-bold text-slate-900 dark:text-white">
               +{currentData.accrued.toFixed(2)} руб.
             </span>
           </div>
 
-          <div className="space-y-2.5 divide-y divide-slate-100">
+          <div className="space-y-2.5 divide-y divide-slate-100 dark:divide-slate-800">
             {currentData.accruals.map((item, idx) => (
               <div key={idx} className="flex justify-between items-start text-xs sm:text-sm pt-2 first:pt-0">
                 <div>
-                  <div className="font-medium text-slate-800">{item.name}</div>
+                  <div className="font-medium text-slate-800 dark:text-slate-200">{item.name}</div>
                   {item.description && (
-                    <div className="text-xs text-slate-500">{item.description}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{item.description}</div>
                   )}
                 </div>
-                <span className="font-bold text-slate-900 shrink-0 ml-2">
+                <span className="font-bold text-slate-900 dark:text-white shrink-0 ml-2">
                   +{item.amount.toFixed(2)} руб.
                 </span>
               </div>
@@ -252,26 +252,26 @@ export default function Payslip() {
         </div>
 
         {/* Deductions List */}
-        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
               Удержания ({currentData.deductions.length})
             </h3>
-            <span className="text-xs font-bold text-slate-700">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
               -{currentData.deducted.toFixed(2)} руб.
             </span>
           </div>
 
-          <div className="space-y-2.5 divide-y divide-slate-100">
+          <div className="space-y-2.5 divide-y divide-slate-100 dark:divide-slate-800">
             {currentData.deductions.map((item, idx) => (
               <div key={idx} className="flex justify-between items-start text-xs sm:text-sm pt-2 first:pt-0">
                 <div>
-                  <div className="font-medium text-slate-800">{item.name}</div>
+                  <div className="font-medium text-slate-800 dark:text-slate-200">{item.name}</div>
                   {item.description && (
-                    <div className="text-xs text-slate-500">{item.description}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{item.description}</div>
                   )}
                 </div>
-                <span className="font-bold text-slate-700 shrink-0 ml-2">
+                <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0 ml-2">
                   -{item.amount.toFixed(2)} руб.
                 </span>
               </div>
@@ -283,7 +283,7 @@ export default function Payslip() {
       {/* Action Buttons: PDF Download + Email */}
       <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
         <Button
-          className="bg-[#002B7F] hover:bg-[#001D56] text-white h-11 rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors cursor-pointer px-6"
+          className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white h-11 rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors cursor-pointer px-6"
           onClick={handleDownload}
         >
           <Download className="mr-2 h-4 w-4 stroke-[2.2px]" />
@@ -291,10 +291,10 @@ export default function Payslip() {
         </Button>
         <Button
           variant="outline"
-          className="border-slate-200 bg-white hover:bg-slate-50 text-slate-700 h-11 rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer px-6"
+          className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 h-11 rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer px-6"
           onClick={handleSendEmail}
         >
-          <Mail className="mr-2 h-4 w-4 text-[#002B7F]" />
+          <Mail className="mr-2 h-4 w-4 text-[#002B7F] dark:text-blue-400" />
           Отправить на email
         </Button>
       </div>
