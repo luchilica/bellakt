@@ -1,21 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import {
   Download,
   Mail,
   ArrowLeft,
-  Calendar,
   CreditCard,
   TrendingUp,
   TrendingDown,
-  CheckCircle2,
   Eye,
   EyeOff,
-  Building2,
-  Shield,
-  FileSpreadsheet,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../store/useAuthStore';
@@ -25,32 +22,30 @@ interface PeriodData {
   accrued: number;
   deducted: number;
   toPay: number;
-  accruals: { name: string; amount: number; tag: string; description?: string }[];
-  deductions: { name: string; amount: number; tag: string; description?: string }[];
+  accruals: { name: string; amount: number }[];
+  deductions: { name: string; amount: number }[];
 }
 
 const PAYSLIP_RECORDS: Record<string, PeriodData> = {
   '2026-08': {
     periodLabel: 'Август 2026',
     accrued: 2150.00,
-    deducted: 538.90,
-    toPay: 1611.10,
+    deducted: 568.90,
+    toPay: 1581.10,
     accruals: [
-      { name: 'Оклад по часам и тарифной ставке', amount: 920.00, tag: 'Тариф', description: '168 раб. часов' },
-      { name: 'Премия за качество и выполнение плана (30%)', amount: 276.00, tag: 'Премия', description: 'По приказу №142' },
-      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00, tag: 'Стаж', description: 'Стаж более 5 лет' },
-      { name: 'Доплата за работу в ночные смены', amount: 116.00, tag: 'Смены', description: '32 ночных часа' },
-      { name: 'Контрактная надбавка за сложность', amount: 500.00, tag: 'Контракт', description: 'Условия контракта' },
-      { name: 'Материальная помощь к оздоровлению', amount: 200.00, tag: 'Соцпакет', description: 'Коллективный договор' },
+      { name: 'Оклад по часам и тарифной ставке', amount: 920.00 },
+      { name: 'Премия за качество и выполнение плана (30%)', amount: 276.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за работу в ночные смены', amount: 116.00 },
+      { name: 'Контрактная надбавка за сложность', amount: 500.00 },
+      { name: 'Материальная помощь к оздоровлению', amount: 200.00 },
     ],
     deductions: [
-      { name: 'Подоходный налог (13%)', amount: 279.50, tag: 'Налог', description: 'В бюджет Республики Беларусь' },
-      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 21.50, tag: 'ФСЗН', description: 'Фонд социальной защиты' },
-      { name: 'Профсоюзный взнос (1%)', amount: 21.50, tag: 'Профком', description: 'Первичная организация ОАО «Беллакт»' },
-      { name: 'Питание в столовой предприятия', amount: 57.00, tag: 'Столовая', description: 'Списание по электронному талону' },
-      { name: 'Услуги ФОК «Волна»', amount: 25.00, tag: 'Спорт', description: 'Льготный абонемент бассейн' },
-      { name: 'Мобильная связь сверх лимита', amount: 3.40, tag: 'Связь', description: 'Корпоративный тариф А1' },
-      { name: 'Выплаченный плановый аванс', amount: 131.00, tag: 'Аванс', description: 'Выплачен 15.08.2026' },
+      { name: 'Подоходный налог (13%)', amount: 279.50 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 21.50 },
+      { name: 'Профсоюзный взнос (1%)', amount: 21.50 },
+      { name: 'Оказанные услуги', amount: 115.40 },
+      { name: 'Выплаченный плановый аванс', amount: 131.00 },
     ],
   },
   '2026-07': {
@@ -59,19 +54,19 @@ const PAYSLIP_RECORDS: Record<string, PeriodData> = {
     deducted: 512.20,
     toPay: 1527.80,
     accruals: [
-      { name: 'Оклад по тарифной ставке', amount: 920.00, tag: 'Тариф' },
-      { name: 'Премия за выполнение плана (30%)', amount: 276.00, tag: 'Премия' },
-      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00, tag: 'Стаж' },
-      { name: 'Доплата за ночные смены', amount: 106.00, tag: 'Смены' },
-      { name: 'Контрактная надбавка', amount: 500.00, tag: 'Контракт' },
-      { name: 'Премия ко Дню предприятия', amount: 100.00, tag: 'Премия' },
+      { name: 'Оклад по тарифной ставке', amount: 920.00 },
+      { name: 'Премия за выполнение плана (30%)', amount: 276.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за ночные смены', amount: 106.00 },
+      { name: 'Контрактная надбавка', amount: 500.00 },
+      { name: 'Премия ко Дню предприятия', amount: 100.00 },
     ],
     deductions: [
-      { name: 'Подоходный налог (13%)', amount: 265.20, tag: 'Налог' },
-      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 20.40, tag: 'ФСЗН' },
-      { name: 'Профсоюзный взнос (1%)', amount: 20.40, tag: 'Профком' },
-      { name: 'Питание в столовой', amount: 64.20, tag: 'Столовая' },
-      { name: 'Выплаченный аванс', amount: 142.00, tag: 'Аванс' },
+      { name: 'Подоходный налог (13%)', amount: 265.20 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 20.40 },
+      { name: 'Профсоюзный взнос (1%)', amount: 20.40 },
+      { name: 'Оказанные услуги', amount: 64.20 },
+      { name: 'Выплаченный аванс', amount: 142.00 },
     ],
   },
   '2026-06': {
@@ -80,19 +75,79 @@ const PAYSLIP_RECORDS: Record<string, PeriodData> = {
     deducted: 494.40,
     toPay: 1485.60,
     accruals: [
-      { name: 'Оклад по тарифной ставке', amount: 920.00, tag: 'Тариф' },
-      { name: 'Премия за качество (25%)', amount: 230.00, tag: 'Премия' },
-      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00, tag: 'Стаж' },
-      { name: 'Доплата за ночные смены', amount: 92.00, tag: 'Смены' },
-      { name: 'Контрактная надбавка', amount: 500.00, tag: 'Контракт' },
-      { name: 'Надбавка за наставничество', amount: 100.00, tag: 'Наставник' },
+      { name: 'Оклад по тарифной ставке', amount: 920.00 },
+      { name: 'Премия за качество (25%)', amount: 230.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за ночные смены', amount: 92.00 },
+      { name: 'Контрактная надбавка', amount: 500.00 },
+      { name: 'Надбавка за наставничество', amount: 100.00 },
     ],
     deductions: [
-      { name: 'Подоходный налог (13%)', amount: 257.40, tag: 'Налог' },
-      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.80, tag: 'ФСЗН' },
-      { name: 'Профсоюзный взнос (1%)', amount: 19.80, tag: 'Профком' },
-      { name: 'Питание в столовой', amount: 47.40, tag: 'Столовая' },
-      { name: 'Выплаченный аванс', amount: 150.00, tag: 'Аванс' },
+      { name: 'Подоходный налог (13%)', amount: 257.40 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.80 },
+      { name: 'Профсоюзный взнос (1%)', amount: 19.80 },
+      { name: 'Оказанные услуги', amount: 47.40 },
+      { name: 'Выплаченный аванс', amount: 150.00 },
+    ],
+  },
+  '2026-05': {
+    periodLabel: 'Май 2026',
+    accrued: 1950.00,
+    deducted: 487.50,
+    toPay: 1462.50,
+    accruals: [
+      { name: 'Оклад по тарифной ставке', amount: 920.00 },
+      { name: 'Премия за выполнение плана (25%)', amount: 230.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за праздничные смены (9 Мая)', amount: 162.00 },
+      { name: 'Контрактная надбавка', amount: 500.00 },
+    ],
+    deductions: [
+      { name: 'Подоходный налог (13%)', amount: 253.50 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.50 },
+      { name: 'Профсоюзный взнос (1%)', amount: 19.50 },
+      { name: 'Оказанные услуги', amount: 55.00 },
+      { name: 'Выплаченный аванс', amount: 140.00 },
+    ],
+  },
+  '2026-04': {
+    periodLabel: 'Апрель 2026',
+    accrued: 1920.00,
+    deducted: 480.00,
+    toPay: 1440.00,
+    accruals: [
+      { name: 'Оклад по тарифной ставке', amount: 920.00 },
+      { name: 'Премия за качество (25%)', amount: 230.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за ночные смены', amount: 132.00 },
+      { name: 'Контрактная надбавка', amount: 500.00 },
+    ],
+    deductions: [
+      { name: 'Подоходный налог (13%)', amount: 249.60 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.20 },
+      { name: 'Профсоюзный взнос (1%)', amount: 19.20 },
+      { name: 'Оказанные услуги', amount: 52.00 },
+      { name: 'Выплаченный аванс', amount: 140.00 },
+    ],
+  },
+  '2026-03': {
+    periodLabel: 'Март 2026',
+    accrued: 1910.00,
+    deducted: 477.50,
+    toPay: 1432.50,
+    accruals: [
+      { name: 'Оклад по тарифной ставке', amount: 920.00 },
+      { name: 'Премия за качество (25%)', amount: 230.00 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за смены', amount: 122.00 },
+      { name: 'Контрактная надбавка', amount: 500.00 },
+    ],
+    deductions: [
+      { name: 'Подоходный налог (13%)', amount: 248.30 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.10 },
+      { name: 'Профсоюзный взнос (1%)', amount: 19.10 },
+      { name: 'Оказанные услуги', amount: 51.00 },
+      { name: 'Выплаченный аванс', amount: 140.00 },
     ],
   },
 };
@@ -101,31 +156,74 @@ const PERIODS = [
   { id: '2026-08', label: 'Август 2026' },
   { id: '2026-07', label: 'Июль 2026' },
   { id: '2026-06', label: 'Июнь 2026' },
+  { id: '2026-05', label: 'Май 2026' },
+  { id: '2026-04', label: 'Апрель 2026' },
+  { id: '2026-03', label: 'Март 2026' },
 ];
 
 export default function Payslip() {
   const { employeeData } = useAuthStore();
-  const [period, setPeriod] = useState('2026-08');
+  const [periodIndex, setPeriodIndex] = useState(0); // 0 corresponds to 2026-08 (latest)
   const [isPrivacyMode, setIsPrivacyMode] = useState(false);
 
-  const currentData = PAYSLIP_RECORDS[period] || PAYSLIP_RECORDS['2026-08'];
+  const corporateEmail = employeeData?.email || 'ivanov@bellakt.by';
+
+  // Instant one-click subscription toggle to corporate email from profile (no popup modal)
+  const [isSubscribed, setIsSubscribed] = useState(() => {
+    return localStorage.getItem('bellakt_payslip_subscribed') === 'true';
+  });
+
+  const handleToggleSubscription = () => {
+    const nextState = !isSubscribed;
+    setIsSubscribed(nextState);
+    localStorage.setItem('bellakt_payslip_subscribed', String(nextState));
+
+    if (nextState) {
+      toast.success(
+        `Подписка оформлена! Расчётный листок будет автоматически приходить за 1 день до зарплаты на рабочую почту ${corporateEmail}`
+      );
+    } else {
+      toast.info('Подписка на рассылку расчетного листа отключена');
+    }
+  };
+
+  const currentPeriod = PERIODS[periodIndex] || PERIODS[0];
+  const currentData =
+    PAYSLIP_RECORDS[currentPeriod.id] || PAYSLIP_RECORDS['2026-08'];
 
   const formatAmount = (val: number, prefix: string = '') => {
     if (isPrivacyMode) return '•••••• руб.';
     return `${prefix}${val.toFixed(2)} руб.`;
   };
 
+  const handlePrevPeriod = () => {
+    if (periodIndex < PERIODS.length - 1) {
+      setPeriodIndex((prev) => prev + 1);
+    }
+  };
+
+  const handleNextPeriod = () => {
+    if (periodIndex > 0) {
+      setPeriodIndex((prev) => prev - 1);
+    }
+  };
+
   const handleDownload = () => {
-    toast.success(`Расчетный лист за ${currentData.periodLabel} сформирован и загружен (PDF с ЭЦП)`);
+    toast.success(`Расчетный лист за ${currentData.periodLabel} сформирован и загружен`);
   };
 
   const handleSendEmail = () => {
-    toast.success(`Расчетный лист за ${currentData.periodLabel} отправлен на корпоративный email: ${employeeData?.email || 'ivanov@bellakt.by'}`);
+    toast.success(
+      `Расчетный лист за ${currentData.periodLabel} отправлен на рабочую почту сотрудника: ${corporateEmail}`
+    );
   };
 
   return (
-    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-10">
-      {/* Header with Segmented Period Pills & Privacy Toggle */}
+    <div
+      className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-10 border-[#fff6f5]"
+      style={{ borderColor: '#fff6f5' }}
+    >
+      {/* Header with Month Arrow Switcher & Privacy Toggle */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
@@ -135,177 +233,167 @@ export default function Payslip() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Расчётный лист
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-normal">
-              Электронный квиток по заработной плате и налогам
-            </p>
-          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Расчётный лист
+          </h1>
         </div>
 
-        {/* Right side controls: Period segmented pills + Kiosk Privacy Switcher */}
-        <div className="flex items-center flex-wrap sm:flex-nowrap gap-2">
-          {/* Segmented Period Switcher (like Canteen & HealthJournal) */}
-          <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-x-auto">
-            {PERIODS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setPeriod(p.id)}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
-                  period === p.id
-                    ? 'bg-[#002B7F] text-white shadow-xs'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
+        {/* Right controls: < месяц > + Подписка на рассылку (быстрое включение на корпоративную почту без всплывающих окон) + Скрыть суммы */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 w-full lg:w-auto lg:min-w-[560px]">
+          {/* < Месяц > Arrow Switcher */}
+          <div className="h-10 sm:h-11 flex items-center justify-between bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs p-1 w-full">
+            <button
+              type="button"
+              onClick={handlePrevPeriod}
+              disabled={periodIndex >= PERIODS.length - 1}
+              className="h-full aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shrink-0"
+              title="Предыдущий месяц"
+              aria-label="Предыдущий месяц"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <span className="px-2 sm:px-3 text-xs sm:text-sm font-bold text-slate-900 dark:text-white text-center select-none truncate flex-1">
+              {currentData.periodLabel}
+            </span>
+            <button
+              type="button"
+              onClick={handleNextPeriod}
+              disabled={periodIndex <= 0}
+              className="h-full aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shrink-0"
+              title="Следующий месяц"
+              aria-label="Следующий месяц"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
           </div>
 
-          {/* Privacy Toggle Button for Kiosk Safety */}
+          {/* Subscription Button - direct toggle to corporate email from profile without modal */}
+          <button
+            type="button"
+            onClick={handleToggleSubscription}
+            className={`h-10 sm:h-11 px-3 sm:px-4 rounded-xl border text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer flex items-center justify-center gap-2 w-full ${
+              isSubscribed
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+            title={`Рассылка расчетного листа на рабочую почту ${corporateEmail}`}
+          >
+            <Mail className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#002B7F] dark:text-blue-400 shrink-0" />
+            <span className="truncate">{isSubscribed ? 'Рассылка активна' : 'Подписка на рассылку'}</span>
+          </button>
+
+          {/* Privacy Toggle Button */}
           <button
             type="button"
             onClick={() => {
               setIsPrivacyMode(!isPrivacyMode);
-              toast.info(isPrivacyMode ? 'Суммы отображены' : 'Суммы скрыты (защита от посторонних глаз)');
+              toast.info(
+                isPrivacyMode
+                  ? 'Суммы отображены'
+                  : 'Суммы скрыты (защита от посторонних глаз)'
+              );
             }}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all text-xs font-bold cursor-pointer shrink-0 shadow-2xs ${
+            className={`h-10 sm:h-11 px-3 sm:px-4 rounded-xl border transition-all text-xs sm:text-sm font-bold cursor-pointer shadow-2xs flex items-center justify-center gap-2 w-full ${
               isPrivacyMode
                 ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200'
                 : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
-            title={isPrivacyMode ? 'Показать суммы' : 'Скрыть суммы (защита от посторонних глаз)'}
+            title={
+              isPrivacyMode
+                ? 'Показать суммы'
+                : 'Скрыть суммы (защита от посторонних глаз)'
+            }
           >
             {isPrivacyMode ? (
               <>
-                <Eye className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                <span className="hidden sm:inline">Показать суммы</span>
+                <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-amber-700 dark:text-amber-400 shrink-0" />
+                <span className="truncate">Показать суммы</span>
               </>
             ) : (
               <>
-                <EyeOff className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                <span className="hidden sm:inline">Скрыть суммы</span>
+                <EyeOff className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-500 dark:text-slate-400 shrink-0" />
+                <span className="truncate">Скрыть суммы</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Employee Identity Strip */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-300 flex items-center justify-center font-bold text-sm shrink-0 border border-transparent dark:border-blue-800/40">
+      {/* Employee Identity Strip - Minimalist, like HealthJournal, no badges/labels */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 flex items-center gap-3.5 shadow-2xs">
+        {employeeData?.avatar_url ? (
+          <img
+            src={employeeData.avatar_url}
+            alt={employeeData?.full_name || 'Сотрудник'}
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-300 flex items-center justify-center font-bold text-sm sm:text-base shrink-0 border border-transparent dark:border-blue-800/40">
             {employeeData?.full_name?.charAt(0) || 'Е'}
           </div>
-          <div>
-            <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
-              {employeeData?.full_name || 'Бороденя Евгений Сергеевич'}
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">
-              Табельный номер: <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{employeeData?.tab_number || '20481'}</span> • {employeeData?.position || 'Инженер-технолог цеха №1'}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 self-start md:self-center">
-          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
-            ОАО «Беллакт»
-          </span>
-          <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-1 rounded-md flex items-center gap-1">
-            <CheckCircle2 className="w-3 h-3" />
-            ЭЦП бухгалтерии активна
-          </span>
+        )}
+        <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
+          {employeeData?.full_name || 'Бороденя Евгений Сергеевич'}
         </div>
       </div>
 
-      {/* Main Total Summary Cards (Benchmark Squircle style like Dashboard & HealthJournal) */}
+      {/* Main Total Summary Cards: Only Icon, Label and Amount */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5">
         {/* 1. К ВЫДАЧЕ НА КАРТУ */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border-2 border-[#0B4DA2]/30 dark:border-[#60A5FA]/30 flex flex-col justify-between relative overflow-hidden">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#E8F1FC] dark:bg-blue-950/60 border border-transparent dark:border-blue-800/40 flex items-center justify-center text-[#0B4DA2] dark:text-blue-300 shrink-0">
-              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2px]" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                К выдаче на карту
-              </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#002B7F] dark:text-[#60A5FA] tracking-tight mt-0.5">
-                {formatAmount(currentData.toPay)}
-              </div>
-            </div>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-300 flex items-center justify-center shrink-0 border border-transparent dark:border-blue-800/40">
+            <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2px]" />
           </div>
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400">Банк зачисления:</span>
-            <span className="font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Беларусбанк
-            </span>
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+              К выдаче на карту
+            </div>
+            <div className="text-base sm:text-lg font-bold text-[#002B7F] dark:text-[#60A5FA] tracking-tight">
+              {formatAmount(currentData.toPay)}
+            </div>
           </div>
         </div>
 
         {/* 2. ВСЕГО НАЧИСЛЕНО */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800/40 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
-              <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2px]" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Всего начислено
-              </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-0.5">
-                {formatAmount(currentData.accrued, '+')}
-              </div>
-            </div>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800/40">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2px]" />
           </div>
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400">Позиций дохода:</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              {currentData.accruals.length} выплат
-            </span>
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+              Всего начислено
+            </div>
+            <div className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+              {formatAmount(currentData.accrued, '+')}
+            </div>
           </div>
         </div>
 
         {/* 3. ВСЕГО УДЕРЖАНО */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center text-slate-700 dark:text-slate-300 shrink-0">
-              <TrendingDown className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2px]" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Всего удержано
-              </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-700 dark:text-slate-300 tracking-tight mt-0.5">
-                {formatAmount(currentData.deducted, '-')}
-              </div>
-            </div>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-100 dark:border-rose-800/40">
+            <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2px]" />
           </div>
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400">Включая аванс:</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              налоги 13%, ФСЗН, столовая
-            </span>
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+              Всего удержано
+            </div>
+            <div className="text-base sm:text-lg font-bold text-slate-700 dark:text-slate-300 tracking-tight">
+              {formatAmount(currentData.deducted, '-')}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Details Columns: Accruals vs Deductions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-        {/* Accruals List */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 p-4 sm:p-5 lg:p-6 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-emerald-500 shrink-0" />
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
-                Начисления ({currentData.accruals.length})
-              </h3>
-            </div>
-            <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400">
+        {/* Accruals List (Styled in Green, no dot, no extra explanations) */}
+        <div className="bg-emerald-50/40 dark:bg-emerald-950/20 rounded-2xl lg:rounded-3xl border-2 border-emerald-300/80 dark:border-emerald-800/60 p-4 sm:p-5 lg:p-6 space-y-3">
+          <div className="flex items-center justify-between border-b border-emerald-200/80 dark:border-emerald-800/60 pb-3">
+            <h3 className="font-bold text-emerald-900 dark:text-emerald-200 text-sm sm:text-base">
+              Начисления ({currentData.accruals.length})
+            </h3>
+            <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-300">
               {formatAmount(currentData.accrued, '+')}
             </span>
           </div>
@@ -314,71 +402,69 @@ export default function Payslip() {
             {currentData.accruals.map((item, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800"
+                className="p-3 rounded-xl bg-white dark:bg-slate-900/90 border border-emerald-100 dark:border-emerald-900/40 flex items-center justify-between gap-3 shadow-2xs"
               >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
-                      {item.name}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
-                      {item.tag}
-                    </span>
-                  </div>
-                  {item.description && (
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      {item.description}
-                    </div>
-                  )}
-                </div>
-                <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white shrink-0 ml-2">
+                <span className="font-medium text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
+                  {item.name}
+                </span>
+                <span className="font-bold text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 shrink-0 ml-2">
                   {formatAmount(item.amount, '+')}
-                </div>
+                </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Deductions List */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl lg:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none border border-slate-100 dark:border-slate-800 p-4 sm:p-5 lg:p-6 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-slate-500 shrink-0" />
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
-                Удержания ({currentData.deductions.length})
-              </h3>
-            </div>
-            <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">
+        {/* Deductions List (Styled in Rose/Deductions theme, no dot, no extra explanations) */}
+        <div className="bg-rose-50/40 dark:bg-rose-950/20 rounded-2xl lg:rounded-3xl border-2 border-rose-300/80 dark:border-rose-800/60 p-4 sm:p-5 lg:p-6 space-y-3">
+          <div className="flex items-center justify-between border-b border-rose-200/80 dark:border-rose-800/60 pb-3">
+            <h3 className="font-bold text-rose-900 dark:text-rose-200 text-sm sm:text-base">
+              Удержания ({currentData.deductions.length})
+            </h3>
+            <span className="text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-300">
               {formatAmount(currentData.deducted, '-')}
             </span>
           </div>
 
           <div className="space-y-2 pt-1">
-            {currentData.deductions.map((item, idx) => (
-              <div
-                key={idx}
-                className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
-                      {item.name}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-700/60 px-2 py-0.5 rounded-md">
-                      {item.tag}
-                    </span>
-                  </div>
-                  {item.description && (
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      {item.description}
+            {currentData.deductions.map((item, idx) => {
+              if (item.name === 'Оказанные услуги') {
+                return (
+                  <Link
+                    key={idx}
+                    to="/services"
+                    title="Перейти к детализации в раздел «Оказанные услуги»"
+                    className="p-3 rounded-xl bg-white dark:bg-slate-900/90 border border-rose-100 dark:border-rose-900/40 hover:border-[#002B7F]/40 dark:hover:border-blue-500/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center justify-between gap-3 shadow-2xs transition-colors group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-medium text-xs sm:text-sm text-slate-900 dark:text-white leading-snug group-hover:text-[#002B7F] dark:group-hover:text-blue-400 transition-colors">
+                        {item.name}
+                      </span>
+                      <span className="text-[11px] text-slate-400 group-hover:text-[#002B7F] dark:group-hover:text-blue-400 transition-colors shrink-0">
+                        (подробнее →)
+                      </span>
                     </div>
-                  )}
+                    <span className="font-bold text-xs sm:text-sm text-rose-700 dark:text-rose-400 shrink-0 ml-2">
+                      {formatAmount(item.amount, '-')}
+                    </span>
+                  </Link>
+                );
+              }
+
+              return (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900/90 border border-rose-100 dark:border-rose-900/40 flex items-center justify-between gap-3 shadow-2xs"
+                >
+                  <span className="font-medium text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
+                    {item.name}
+                  </span>
+                  <span className="font-bold text-xs sm:text-sm text-rose-700 dark:text-rose-400 shrink-0 ml-2">
+                    {formatAmount(item.amount, '-')}
+                  </span>
                 </div>
-                <div className="font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-300 shrink-0 ml-2">
-                  {formatAmount(item.amount, '-')}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -390,7 +476,7 @@ export default function Payslip() {
           onClick={handleDownload}
         >
           <Download className="mr-2 h-4 w-4 stroke-[2.2px]" />
-          Скачать расчетный лист (PDF с ЭЦП)
+          Скачать расчетный лист
         </Button>
         <Button
           variant="outline"
@@ -404,4 +490,3 @@ export default function Payslip() {
     </div>
   );
 }
-

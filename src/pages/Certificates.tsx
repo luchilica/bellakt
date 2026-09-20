@@ -178,14 +178,9 @@ export default function Certificates() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Заказ справок
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-normal">
-              Официальные документы о доходах, зарплате и стаже с ЭЦП
-            </p>
-          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Заказ справок
+          </h1>
         </div>
 
         {/* Custom Request Dialog Trigger */}

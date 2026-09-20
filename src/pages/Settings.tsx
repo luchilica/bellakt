@@ -155,14 +155,9 @@ export default function Settings() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Настройки портала
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Тема оформления, персонализация навигации и безопасность
-            </p>
-          </div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Настройки портала
+          </h1>
         </div>
 
         {/* Quick theme switch in header */}

@@ -32,14 +32,9 @@ export default function Profile() {
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Электронный пропуск сотрудника
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-            Служебные реквизиты, допуски и идентификатор ОАО «Беллакт»
-          </p>
-        </div>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+          Электронный пропуск сотрудника
+        </h1>
       </div>
 
       {/* Main Electronic ID Card */}
