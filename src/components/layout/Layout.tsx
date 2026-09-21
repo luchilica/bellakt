@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useKioskSecurityStore } from '../../store/useKioskSecurityStore';
 import {
   useNavPreferencesStore,
   ALL_AVAILABLE_NAV_ITEMS,
@@ -49,12 +50,47 @@ export function Layout() {
   const item1 = ALL_AVAILABLE_NAV_ITEMS[slot1] || ALL_AVAILABLE_NAV_ITEMS.health;
   const item2 = ALL_AVAILABLE_NAV_ITEMS[slot2] || ALL_AVAILABLE_NAV_ITEMS.canteen;
 
+  const { getTimeoutMs } = useKioskSecurityStore();
+  const lastActivityRef = useRef(Date.now());
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Фоновый мониторинг неактивности терминала (Kiosk Inactivity Watchdog)
+  useEffect(() => {
+    if (!user) return;
+
+    const onUserActivity = () => {
+      lastActivityRef.current = Date.now();
+    };
+
+    const events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+    events.forEach((evt) => window.addEventListener(evt, onUserActivity, { passive: true }));
+
+    const checkInterval = setInterval(() => {
+      const timeoutMs = getTimeoutMs();
+      if (timeoutMs && Date.now() - lastActivityRef.current >= timeoutMs) {
+        // Таймаут безопасности: автоматический выход и сброс сессии
+        logout();
+      }
+    }, 3000);
+
+    // Защита от Kiosk Escape (блокировка системного контекстного меню при долгом тапе/правом клике)
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      events.forEach((evt) => window.removeEventListener(evt, onUserActivity));
+      clearInterval(checkInterval);
+      window.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [user, getTimeoutMs, logout]);
 
   if (isLoading) {
     return <LoadingScreen />;

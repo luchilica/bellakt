@@ -47,6 +47,7 @@ import {
   NavItemKey,
 } from '../store/useNavPreferencesStore';
 import { useAuthStore } from '../store/useAuthStore';
+import { useKioskSecurityStore } from '../store/useKioskSecurityStore';
 import { toast } from 'sonner';
 import { cn } from '../lib/utils';
 
@@ -91,8 +92,8 @@ export default function Settings() {
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [lastSubmittedId, setLastSubmittedId] = useState('');
 
-  // Kiosk settings state
-  const [autoLogout, setAutoLogout] = useState('5');
+  // Kiosk security settings state (persisted & enforced globally)
+  const { autoLogout, setAutoLogout } = useKioskSecurityStore();
   const [soundFeedback, setSoundFeedback] = useState(true);
 
   const handleSecuritySubmit = (e: React.FormEvent) => {
@@ -547,7 +548,7 @@ export default function Settings() {
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => setAutoLogout(opt.value)}
+                    onClick={() => setAutoLogout(opt.value as '2' | '5' | '10' | 'never')}
                     className={cn(
                       'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-center',
                       autoLogout === opt.value
