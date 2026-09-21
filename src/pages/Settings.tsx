@@ -20,7 +20,6 @@ import {
   LogOut,
   ShieldAlert,
   Info,
-  Palette,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -152,43 +151,39 @@ export default function Settings() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 p-1 sm:p-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-2xs h-auto sm:h-14 gap-1">
+        <TabsList className="grid w-full grid-cols-4 p-1 sm:p-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-xl sm:rounded-2xl shadow-2xs gap-1 sm:gap-1.5 h-11 sm:h-12 items-stretch">
           <TabsTrigger
             value="appearance"
-            className="rounded-xl font-bold text-[10px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-[state=active]:text-[#002B7F] dark:data-[state=active]:text-blue-300 data-active:shadow-xs data-[state=active]:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-0 px-1 sm:px-2 h-auto sm:h-full transition-all text-center min-w-0"
+            className="h-full rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-active:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center px-1 sm:px-3 transition-all text-center min-w-0 cursor-pointer select-none"
           >
-            <Palette className="w-4 h-4 shrink-0" />
-            <span className="truncate max-w-full leading-tight select-none">
+            <span className="truncate max-w-full leading-none">
               <span className="hidden sm:inline">Тема и стиль</span>
               <span className="sm:hidden">Тема</span>
             </span>
           </TabsTrigger>
           <TabsTrigger
             value="navigation"
-            className="rounded-xl font-bold text-[10px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-[state=active]:text-[#002B7F] dark:data-[state=active]:text-blue-300 data-active:shadow-xs data-[state=active]:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-0 px-1 sm:px-2 h-auto sm:h-full transition-all text-center min-w-0"
+            className="h-full rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-active:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center px-1 sm:px-3 transition-all text-center min-w-0 cursor-pointer select-none"
           >
-            <SlidersHorizontal className="w-4 h-4 shrink-0" />
-            <span className="truncate max-w-full leading-tight select-none">
+            <span className="truncate max-w-full leading-none">
               <span className="hidden sm:inline">Нижняя навигация</span>
               <span className="sm:hidden">Навигация</span>
             </span>
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="rounded-xl font-bold text-[10px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-[state=active]:text-[#002B7F] dark:data-[state=active]:text-blue-300 data-active:shadow-xs data-[state=active]:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-0 px-1 sm:px-2 h-auto sm:h-full transition-all text-center min-w-0"
+            className="h-full rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-active:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center px-1 sm:px-3 transition-all text-center min-w-0 cursor-pointer select-none"
           >
-            <KeyRound className="w-4 h-4 shrink-0" />
-            <span className="truncate max-w-full leading-tight select-none">
+            <span className="truncate max-w-full leading-none">
               <span className="hidden sm:inline">Пароль и QR-код</span>
               <span className="sm:hidden">Пароль и QR</span>
             </span>
           </TabsTrigger>
           <TabsTrigger
             value="kiosk"
-            className="rounded-xl font-bold text-[10px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-[state=active]:text-[#002B7F] dark:data-[state=active]:text-blue-300 data-active:shadow-xs data-[state=active]:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-0 px-1 sm:px-2 h-auto sm:h-full transition-all text-center min-w-0"
+            className="h-full rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs md:text-sm data-active:bg-white dark:data-active:bg-slate-900 data-active:text-[#002B7F] dark:data-active:text-blue-300 data-active:shadow-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center px-1 sm:px-3 transition-all text-center min-w-0 cursor-pointer select-none"
           >
-            <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span className="truncate max-w-full leading-tight select-none">
+            <span className="truncate max-w-full leading-none">
               Инфокиоск
             </span>
           </TabsTrigger>
