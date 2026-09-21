@@ -215,7 +215,6 @@ export default function Settings() {
                 size="sm"
                 onClick={() => {
                   resetToDefaults();
-                  toast.success('Настройки навигации сброшены по умолчанию');
                 }}
                 className="rounded-xl text-xs font-bold h-8 px-3 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white cursor-pointer self-start sm:self-auto shrink-0"
               >
@@ -281,7 +280,6 @@ export default function Settings() {
                       type="button"
                       onClick={() => {
                         setSlot1(key);
-                        toast.success(`Слот 1 изменён на «${it.label}»`);
                       }}
                       className={cn(
                         'p-2 sm:p-2.5 rounded-xl border text-left flex items-center gap-2 sm:gap-2.5 transition-all cursor-pointer min-h-[44px] min-w-0',
@@ -331,7 +329,6 @@ export default function Settings() {
                       type="button"
                       onClick={() => {
                         setSlot2(key);
-                        toast.success(`Слот 2 изменён на «${it.label}»`);
                       }}
                       className={cn(
                         'p-2 sm:p-2.5 rounded-xl border text-left flex items-center gap-2 sm:gap-2.5 transition-all cursor-pointer min-h-[44px] min-w-0',
@@ -578,9 +575,6 @@ export default function Settings() {
                 variant="outline"
                 onClick={() => {
                   setSoundFeedback(!soundFeedback);
-                  toast.success(
-                    soundFeedback ? 'Звук отключен' : 'Звуковой отклик включен'
-                  );
                 }}
                 className={cn(
                   'rounded-xl text-xs font-bold px-4 h-10 cursor-pointer min-w-[90px] sm:min-w-[100px] shrink-0',

@@ -3,19 +3,12 @@ import { Sun, Moon, Laptop, Check, RefreshCw } from 'lucide-react';
 import { useTheme, Theme } from '../context/ThemeContext';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
-import { toast } from 'sonner';
 
 export function ThemeSettingsCard() {
   const { theme, setTheme } = useTheme();
 
   const handleSelect = (selectedTheme: Theme) => {
     setTheme(selectedTheme);
-    const messages: Record<Theme, string> = {
-      system: 'Включена системная тема',
-      light: 'Включена светлая тема оформления',
-      dark: 'Включена тёмная тема оформления',
-    };
-    toast.success(messages[selectedTheme]);
   };
 
   return (
@@ -142,8 +135,6 @@ export function ThemeQuickToggleButton({ className }: { className?: string }) {
       type="button"
       onClick={() => {
         toggleTheme();
-        const nextMode = theme === 'light' ? 'Тёмная' : theme === 'dark' ? 'Системная (авто)' : 'Светлая';
-        toast.info(`Тема: ${nextMode}`);
       }}
       className={cn(
         'p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-[#002B7F] dark:hover:text-[#60a5fa] hover:border-[#002B7F] dark:hover:border-[#60a5fa] transition-all shadow-2xs cursor-pointer flex items-center justify-center gap-1.5 text-xs font-semibold group',

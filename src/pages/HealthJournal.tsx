@@ -192,7 +192,6 @@ export default function HealthJournal() {
     setSelfStatus('healthy');
     setFamilyStatus('healthy');
     setLastAllowed(true);
-    toast.info('Форма сброшена. Вы можете заполнить отметку заново.');
   };
 
   // Filter history records based on selected month and exact date search

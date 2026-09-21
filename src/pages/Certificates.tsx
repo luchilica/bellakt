@@ -24,6 +24,8 @@ const ALL_CERTIFICATE_TYPES = [
 export default function Certificates() {
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false);
   const [customText, setCustomText] = useState('');
+  // Confirmation state to prevent accidental certificate requests
+  const [pendingCertificate, setPendingCertificate] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<CertificateRequest[]>([
     {
@@ -48,18 +50,25 @@ export default function Certificates() {
     },
   ]);
 
-  const handleRequest = (typeLabel: string) => {
+  const confirmAndExecuteRequest = () => {
+    if (!pendingCertificate) return;
+    const certType = pendingCertificate;
     const newRequest: CertificateRequest = {
       id: `СПР-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: typeLabel,
+      type: certType,
       createdAt: new Date().toLocaleDateString('ru-RU'),
       status: 'processing',
     };
 
     setRequests([newRequest, ...requests]);
-    toast.success(`Запрос оформлен: «${typeLabel}»`, {
+    setPendingCertificate(null);
+    toast.success(`Запрос оформлен: «${certType}»`, {
       description: 'Заявка успешно передана в бухгалтерию ОАО «Беллакт»',
     });
+  };
+
+  const handleRequestClick = (typeLabel: string) => {
+    setPendingCertificate(typeLabel);
   };
 
   const handleCustomSubmit = (e: FormEvent) => {
@@ -70,19 +79,9 @@ export default function Certificates() {
       return;
     }
 
-    const newRequest: CertificateRequest = {
-      id: `СПР-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: `Индивидуальная: ${trimmed}`,
-      createdAt: new Date().toLocaleDateString('ru-RU'),
-      status: 'processing',
-    };
-
-    setRequests([newRequest, ...requests]);
+    setPendingCertificate(`Индивидуальная: ${trimmed}`);
     setCustomText('');
     setIsCustomDialogOpen(false);
-    toast.success('Индивидуальный запрос отправлен', {
-      description: 'Заявка успешно передана в бухгалтерию ОАО «Беллакт»',
-    });
   };
 
   return (
@@ -145,7 +144,7 @@ export default function Certificates() {
               </div>
               <button
                 type="button"
-                onClick={() => handleRequest(cert.label)}
+                onClick={() => handleRequestClick(cert.label)}
                 className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-[#002B7F] hover:bg-[#0B4DA2] active:bg-[#002161] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-2xs shrink-0 text-center active:scale-95 whitespace-nowrap min-w-[80px] sm:min-w-[96px]"
               >
                 Запросить
@@ -273,18 +272,85 @@ export default function Certificates() {
                 <button
                   type="button"
                   onClick={() => setIsCustomDialogOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer min-h-[44px]"
                 >
                   Отмена
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#002B7F] hover:bg-[#0B4DA2] active:bg-[#002161] text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs"
+                  className="px-5 py-2.5 rounded-xl bg-[#002B7F] hover:bg-[#0B4DA2] active:bg-[#002161] text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs min-h-[44px]"
                 >
-                  Отправить
+                  Далее
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal to prevent accidental certificate requests */}
+      {pendingCertificate && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-in fade-in-0"
+          onClick={() => setPendingCertificate(null)}
+        >
+          <div
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 space-y-4 relative animate-in fade-in-0 zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#D6E6F9] dark:bg-blue-950/70 text-[#002B7F] dark:text-blue-300 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 stroke-[2.2px]" />
+              </div>
+              <div className="space-y-0.5 min-w-0 pr-6">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+                  Подтверждение запроса
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Бухгалтерия и кадровая служба ОАО «Беллакт»
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPendingCertificate(null)}
+                className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                title="Закрыть"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-1">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Запрашиваемый документ:
+              </div>
+              <div className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
+                {pendingCertificate}
+              </div>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Вы уверены, что хотите заказать эту справку? 
+            </p>
+
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setPendingCertificate(null)}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer min-h-[44px]"
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                onClick={confirmAndExecuteRequest}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#002B7F] hover:bg-[#0B4DA2] active:bg-[#002161] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs min-h-[44px] whitespace-nowrap"
+              >
+                Да, запросить
+              </button>
+            </div>
           </div>
         </div>
       )}

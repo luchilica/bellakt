@@ -182,8 +182,6 @@ export default function Payslip() {
       toast.success(
         `Подписка оформлена! Расчётный листок будет автоматически приходить за 1 день до зарплаты на рабочую почту ${corporateEmail}`
       );
-    } else {
-      toast.info('Подписка на рассылку расчетного листа отключена');
     }
   };
 
@@ -289,11 +287,6 @@ export default function Payslip() {
             type="button"
             onClick={() => {
               setIsPrivacyMode(!isPrivacyMode);
-              toast.info(
-                isPrivacyMode
-                  ? 'Суммы отображены'
-                  : 'Суммы скрыты (защита от посторонних глаз)'
-              );
             }}
             className={`h-10 sm:h-11 px-3 sm:px-4 rounded-xl border transition-all text-xs sm:text-sm font-bold cursor-pointer shadow-2xs flex items-center justify-center gap-2 w-full ${
               isPrivacyMode

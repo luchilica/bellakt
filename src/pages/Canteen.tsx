@@ -7,6 +7,7 @@ import {
   Search,
   Trash2,
   ShoppingBag,
+  Utensils,
   X,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -529,6 +530,8 @@ export default function Canteen() {
   const [cart, setCart] = useState<Record<string, number>>({});
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  // Confirmation state to prevent accidental order placement
+  const [isConfirmOrderOpen, setIsConfirmOrderOpen] = useState(false);
 
   const currentDay = daysList[dayIndex] || daysList[daysList.length - 1];
 
@@ -555,7 +558,6 @@ export default function Canteen() {
 
   const addToCart = (dishId: string) => {
     if (currentDay.isPast) {
-      toast.info('Предзаказ недоступен на прошедшую дату');
       return;
     }
     setCart((prev) => ({
@@ -582,18 +584,15 @@ export default function Canteen() {
       delete next[dishId];
       return next;
     });
-    toast.info('Блюдо удалено из талона');
   };
 
   const clearEntireCart = () => {
     setCart({});
     setIsOrderModalOpen(false);
-    toast.info('Обеденный талон очищен');
   };
 
   const handleOrderSubmit = () => {
     if (totalCartCount === 0) {
-      toast.error('Корзина пуста');
       return;
     }
     setIsOrderModalOpen(false);
@@ -824,33 +823,35 @@ export default function Canteen() {
 
       {/* Sticky Bottom Cart Bar (if items in cart) */}
       {totalCartCount > 0 && (
-        <div className="fixed bottom-20 sm:bottom-24 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 pointer-events-none">
+        <div className="fixed bottom-20 sm:bottom-24 left-0 right-0 z-40 px-3 sm:px-6 lg:px-8 pointer-events-none">
           <div className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto">
             <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto pointer-events-auto">
-              <div className="w-full bg-[#002B7F] dark:bg-blue-900/95 text-white rounded-2xl shadow-xl p-3.5 sm:p-4 flex items-center justify-between animate-in fade-in slide-in-from-bottom-4 border border-blue-700/50 backdrop-blur-xs">
-                <div className="space-y-0.5">
-                  <div className="text-xs text-blue-200 font-medium">
-                    Выбрано: {totalCartCount} блюд(а) • Списание в счёт з/п
+              <div className="w-full bg-[#002B7F] dark:bg-blue-900/95 text-white rounded-2xl shadow-xl p-3 sm:p-4 flex items-center justify-between gap-2 sm:gap-4 animate-in fade-in slide-in-from-bottom-4 border border-blue-700/50 backdrop-blur-xs max-w-full overflow-hidden">
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <div className="text-[11px] sm:text-xs text-blue-200 font-medium truncate">
+                    Выбрано: <span className="font-bold text-white">{totalCartCount}</span> блюд(а)
+                    <span className="hidden md:inline"> • Списание в счёт з/п</span>
                   </div>
-                  <div className="text-base sm:text-lg font-extrabold">
-                    Итого: {totalCartPrice.toFixed(2)} руб.
+                  <div className="text-sm sm:text-lg font-extrabold truncate">
+                    <span className="hidden sm:inline">Итого: </span>
+                    {totalCartPrice.toFixed(2)} руб.
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                   <Button
                     variant="ghost"
                     onClick={clearEntireCart}
-                    className="text-blue-200 hover:text-white hover:bg-blue-800/60 rounded-xl px-2.5 py-1.5 text-xs font-semibold"
+                    className="text-blue-200 hover:text-white hover:bg-blue-800/60 rounded-xl px-2 sm:px-2.5 py-1 text-xs font-semibold h-8 sm:h-9"
                     title="Очистить всё"
                   >
-                    <Trash2 className="w-3.5 h-3.5 mr-1" />
-                    Очистить
+                    <Trash2 className="w-3.5 h-3.5 sm:mr-1 shrink-0" />
+                    <span className="hidden sm:inline">Очистить</span>
                   </Button>
                   <Button
                     onClick={() => setIsOrderModalOpen(true)}
-                    className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-4 py-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                    className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm shadow-md cursor-pointer shrink-0 h-8 sm:h-9 whitespace-nowrap"
                   >
-                    Оформить заказ
+                    Оформить<span className="hidden sm:inline">&nbsp;заказ</span>
                   </Button>
                 </div>
               </div>
@@ -859,9 +860,9 @@ export default function Canteen() {
         </div>
       )}
 
-      {/* Order Confirmation Modal */}
+      {/* Order Review Modal */}
       <Dialog open={isOrderModalOpen} onOpenChange={setIsOrderModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-900 p-5 border-slate-200 dark:border-slate-800 shadow-xl">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-full sm:max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-2xl bg-white dark:bg-slate-900 p-4 sm:p-5 border-slate-200 dark:border-slate-800 shadow-xl">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
               Оформление предзаказа в столовой
@@ -870,7 +871,7 @@ export default function Canteen() {
 
           <div className="space-y-4 py-2">
             {/* Selected dishes breakdown with active removal & quantity editing */}
-            <div className="space-y-2 max-h-60 overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+            <div className="space-y-2 max-h-60 overflow-y-auto overflow-x-hidden pr-1 divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
               {cartEntries.length === 0 ? (
                 <div className="py-6 text-center text-slate-500 dark:text-slate-400 text-xs">
                   В талоне нет выбранных блюд
@@ -880,24 +881,46 @@ export default function Canteen() {
                   const dish = DISHES_DATABASE.find((d) => d.id === id);
                   if (!dish) return null;
                   return (
-                    <div key={id} className="flex justify-between items-center py-2.5 first:pt-0">
-                      <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                        <img
-                          src={dish.image}
-                          alt={dish.name}
-                          className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700"
-                          referrerPolicy="no-referrer"
-                        />
-                        <div className="min-w-0">
-                          <div className="font-semibold text-slate-900 dark:text-white truncate">
-                            {dish.name}
-                          </div>
-                          <div className="text-slate-500 dark:text-slate-400 text-xs">
-                            {dish.price.toFixed(2)} руб. / шт.
+                    <div key={id} className="py-2.5 first:pt-0 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <img
+                            src={dish.image}
+                            alt={dish.name}
+                            className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm truncate">
+                              {dish.name}
+                            </div>
+                            <div className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs">
+                              {dish.price.toFixed(2)} руб. / шт.
+                            </div>
                           </div>
                         </div>
+
+                        {/* Price & Delete on top row */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="text-right font-bold text-slate-900 dark:text-white text-xs sm:text-sm whitespace-nowrap">
+                            {(dish.price * Number(count)).toFixed(2)} руб.
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeEntireDishFromCart(dish.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+                            title="Удалить из заказа"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+
+                      {/* Quantity Stepper Row */}
+                      <div className="flex items-center justify-between pl-12">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Количество порций:
+                        </span>
                         <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
                           <button
                             type="button"
@@ -924,17 +947,6 @@ export default function Canteen() {
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
-                        <div className="w-16 text-right font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
-                          {(dish.price * Number(count)).toFixed(2)} руб.
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeEntireDishFromCart(dish.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
-                          title="Удалить из заказа"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                   );
@@ -953,11 +965,11 @@ export default function Canteen() {
             <div className="bg-slate-50 dark:bg-slate-800/70 rounded-xl p-3 text-xs sm:text-sm space-y-1.5 border border-slate-200 dark:border-slate-700">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Сотрудник:</span>
-                <strong className="text-slate-900 dark:text-white font-semibold">{employeeData?.full_name || 'Иванов И.И.'}</strong>
+                <strong className="text-slate-900 dark:text-white font-semibold truncate ml-2">{employeeData?.full_name || 'Иванов И.И.'}</strong>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Способ оплаты:</span>
-                <strong className="text-slate-900 dark:text-white font-semibold">В счёт заработной платы</strong>
+                <strong className="text-slate-900 dark:text-white font-semibold whitespace-nowrap ml-2">В счёт зарплаты</strong>
               </div>
             </div>
           </div>
@@ -966,16 +978,86 @@ export default function Canteen() {
             <Button
               variant="outline"
               onClick={() => setIsOrderModalOpen(false)}
-              className="rounded-xl text-xs sm:text-sm font-semibold border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
+              className="rounded-xl text-xs sm:text-sm font-semibold border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 min-h-[44px] cursor-pointer"
             >
               Закрыть
             </Button>
             <Button
-              onClick={handleOrderSubmit}
+              onClick={() => {
+                if (totalCartCount === 0 || currentDay.isPast) return;
+                setIsConfirmOrderOpen(true);
+              }}
               disabled={totalCartCount === 0 || currentDay.isPast}
-              className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] shadow-xs whitespace-nowrap"
             >
               Подтвердить заказ
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog to prevent accidental order placement */}
+      <Dialog open={isConfirmOrderOpen} onOpenChange={setIsConfirmOrderOpen}>
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-full sm:max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-2xl bg-white dark:bg-slate-900 p-4 sm:p-6 border-slate-200 dark:border-slate-800 shadow-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#D6E6F9] dark:bg-blue-950/70 text-[#002B7F] dark:text-blue-300 flex items-center justify-center shrink-0">
+                <Utensils className="w-5 h-5 stroke-[2.2px]" />
+              </div>
+              <div>
+                <DialogTitle className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+                  Подтверждение предзаказа
+                </DialogTitle>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  ОАО «Беллакт» • Столовая предприятия
+                </p>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-3.5 py-2">
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2 text-xs sm:text-sm">
+              <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
+                <span>Дата питания:</span>
+                <strong className="text-slate-900 dark:text-white font-semibold">{currentDay.label}</strong>
+              </div>
+              <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
+                <span>Выбрано блюд:</span>
+                <strong className="text-slate-900 dark:text-white font-semibold">{totalCartCount} шт.</strong>
+              </div>
+              <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
+                <span>Сотрудник:</span>
+                <strong className="text-slate-900 dark:text-white font-semibold truncate ml-2">{employeeData?.full_name || 'Иванов И.И.'}</strong>
+              </div>
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between items-center">
+                <span className="font-bold text-slate-900 dark:text-white">Сумма к списанию:</span>
+                <span className="font-extrabold text-base text-[#002B7F] dark:text-blue-400">
+                  {totalCartPrice.toFixed(2)} руб.
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Вы точно хотите оформить предзаказ? 
+            </p>
+          </div>
+
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsConfirmOrderOpen(false)}
+              className="w-full sm:w-auto rounded-xl text-xs sm:text-sm font-semibold border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 min-h-[44px] cursor-pointer"
+            >
+              Отмена
+            </Button>
+            <Button
+              onClick={() => {
+                setIsConfirmOrderOpen(false);
+                handleOrderSubmit();
+              }}
+              className="w-full sm:w-auto bg-[#002B7F] hover:bg-[#0B4DA2] active:bg-[#002161] text-white rounded-xl text-xs sm:text-sm font-bold min-h-[44px] cursor-pointer transition-colors shadow-xs whitespace-nowrap"
+            >
+              Да, подтвердить заказ
             </Button>
           </div>
         </DialogContent>

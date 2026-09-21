@@ -64,7 +64,7 @@ export default function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-        <Toaster position="top-center" />
+        <Toaster position="top-center" duration={3500} visibleToasts={1} offset={16} />
       </QueryClientProvider>
     </ThemeProvider>
   );

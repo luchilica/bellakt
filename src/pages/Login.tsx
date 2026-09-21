@@ -146,7 +146,6 @@ export default function Login() {
               className="w-full h-11 rounded-xl text-sm bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 font-semibold cursor-pointer"
               onClick={() => {
                 loginAsDemo();
-                toast.success('Авторизован как тестовый сотрудник');
               }}
             >
               ⚡ Быстрый вход (Тестовый сотрудник)
@@ -156,7 +155,7 @@ export default function Login() {
               type="button"
               variant="outline"
               className="w-full h-11 rounded-xl text-sm text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
-              onClick={() => toast.info('Функция входа по QR-коду находится в разработке')}
+              onClick={() => {}}
             >
               Войти по QR-коду пропуска
             </Button>
