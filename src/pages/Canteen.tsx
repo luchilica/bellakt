@@ -1,30 +1,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ChevronLeft,
-  ChevronRight,
   Plus,
   Minus,
   ArrowLeft,
-  CheckCircle2,
-  Clock,
-  UtensilsCrossed,
-  Receipt,
+  Search,
+  Trash2,
+  ShoppingBag,
   X,
-  CreditCard,
-  QrCode,
-  Calendar,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { cn } from '../lib/utils';
 import { useAuthStore } from '../store/useAuthStore';
 
 export interface Dish {
@@ -57,145 +50,408 @@ const CATEGORIES = [
 ] as const;
 
 const DISHES_DATABASE: Dish[] = [
+  // ==================== 1. ХОЛОДНЫЕ БЛЮДА (8 позиций) ====================
   {
-    id: 'd1',
-    name: 'Борщ с говядиной и сметаной «Беллакт»',
-    category: 'Первые блюда',
-    weight: '300/20 г',
-    ingredients: 'Говядина отборная, свекла, капуста свежая, картофель, сметана 20% «Беллакт», зелень укропа',
-    kbju: '185 ккал • Б: 14г • Ж: 9г • У: 18г',
-    price: 4.80,
-    image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd2',
-    name: 'Суп куриный с домашней лапшой',
-    category: 'Первые блюда',
-    weight: '300 г',
-    ingredients: 'Филе цыпленка-бройлера, яичная лапша, морковь, лук пассерованный, свежая зелень',
-    kbju: '210 ккал • Б: 19г • Ж: 8г • У: 16г',
-    price: 4.10,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd3',
-    name: 'Солянка мясная сборная',
-    category: 'Первые блюда',
-    weight: '320/15 г',
-    ingredients: 'Буженина, колбаски охотничьи, оливки, маслины, лимон, маринованные огурцы, сметана',
-    kbju: '270 ккал • Б: 18г • Ж: 17г • У: 11г',
-    price: 5.40,
-    image: 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd4',
-    name: 'Котлета мясная «По-волковысски»',
-    category: 'Вторые блюда',
-    weight: '130/50 г',
-    ingredients: 'Фарш свино-говяжий, лучок репчатый, сухарики панировочные, грибной сливочный соус',
-    kbju: '310 ккал • Б: 22г • Ж: 20г • У: 8г',
-    price: 4.90,
-    image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd5',
-    name: 'Драники картофельные со сметаной и шкварками',
-    category: 'Вторые блюда',
-    weight: '250/50 г',
-    ingredients: 'Белорусский отборный картофель, мука, сметана 20% «Беллакт», грудинка жареная',
-    kbju: '420 ккал • Б: 11г • Ж: 27г • У: 35г',
-    price: 4.60,
-    image: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef2396e?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd6',
-    name: 'Филе хека, запеченное с сыром «Беллакт»',
-    category: 'Вторые блюда',
-    weight: '160 г',
-    ingredients: 'Филе хека, сыр твердый «Беллакт», томаты свежие, соус сливочный, пряные травы',
-    kbju: '240 ккал • Б: 26г • Ж: 11г • У: 4г',
-    price: 5.20,
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'd7',
-    name: 'Салат витаминный из свежей капусты',
+    id: 'cold-1',
+    name: 'Салат "Осенний"',
     category: 'Холодные блюда',
-    weight: '150 г',
-    ingredients: 'Капуста белокочанная, морковь соломкой, яблоки, клюква, масло растительное',
-    kbju: '95 ккал • Б: 2г • Ж: 4г • У: 12г',
-    price: 1.80,
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&auto=format&fit=crop&q=80',
+    weight: '90 г',
+    ingredients: 'Свекла, яблоки, капуста белокочанная, кукуруза консервированная, масло растительное',
+    kbju: '88 ккал • Б: 1.8г • Ж: 4.2г • У: 10.8г',
+    price: 1.15,
+    image: '/dishes/cabbage-autumn-salad.jpg',
   },
   {
-    id: 'd8',
-    name: 'Салат «Столичный» с ветчиной',
+    id: 'cold-2',
+    name: 'Салат "Случь"',
     category: 'Холодные блюда',
-    weight: '160 г',
-    ingredients: 'Ветчина, картофель отварной, яйцо куриное, горошек зеленый, соленые огурцы, майонез',
-    kbju: '220 ккал • Б: 9г • Ж: 16г • У: 13г',
-    price: 2.70,
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&auto=format&fit=crop&q=80',
+    weight: '120 г',
+    ingredients: 'Помидоры свежие, чеснок, масло растительное, лук репчатый, зелень',
+    kbju: '76 ккал • Б: 1.2г • Ж: 4.8г • У: 7.1г',
+    price: 1.35,
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80',
   },
   {
-    id: 'd9',
-    name: 'Пюре картофельное на молоке «Беллакт»',
-    category: 'Гарниры',
-    weight: '180 г',
-    ingredients: 'Картофель отборный, натуральное пастеризованное молоко «Беллакт», сливочное масло 82.5%',
-    kbju: '170 ккал • Б: 3г • Ж: 7г • У: 24г',
-    price: 1.60,
-    image: 'https://images.unsplash.com/photo-1618449840665-9ed506d73a34?w=400&auto=format&fit=crop&q=80',
+    id: 'cold-3',
+    name: 'Сельдь с луком',
+    category: 'Холодные блюда',
+    weight: '25/30 г',
+    ingredients: 'Сельдь слабосоленая, лук репчатый маринованный, масло растительное, зелень свежая',
+    kbju: '142 ккал • Б: 9.8г • Ж: 11.2г • У: 1.6г',
+    price: 1.75,
+    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80',
   },
   {
-    id: 'd10',
-    name: 'Каша гречневая рассыпчатая с маслом',
-    category: 'Гарниры',
-    weight: '180 г',
-    ingredients: 'Крупа гречневая ядрица первого сорта, сливочное масло, соль пищевая',
-    kbju: '190 ккал • Б: 6г • Ж: 5г • У: 32г',
-    price: 1.40,
-    image: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=400&auto=format&fit=crop&q=80',
+    id: 'cold-4',
+    name: 'Яйцо под майонезом',
+    category: 'Холодные блюда',
+    weight: '53/20 г',
+    ingredients: 'Яйцо куриное отварное отборное, майонез провансаль, веточка зелени',
+    kbju: '168 ккал • Б: 6.9г • Ж: 15.4г • У: 0.8г',
+    price: 1.20,
+    image: '/dishes/boiled-eggs-mayo.jpg',
   },
   {
-    id: 'd11',
-    name: 'Сырники из свежего творога «Беллакт»',
-    category: 'Кондитерские и мучные изделия',
-    weight: '150/30 г',
-    ingredients: 'Творог 9% «Беллакт», мука высшего сорта, ванилин, сметана «Беллакт», джем ягодный',
-    kbju: '290 ккал • Б: 19г • Ж: 11г • У: 28г',
-    price: 3.20,
-    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=400&auto=format&fit=crop&q=80',
+    id: 'cold-5',
+    name: 'Свекла "Любительская"',
+    category: 'Холодные блюда',
+    weight: '100 г',
+    ingredients: 'Свекла отварная столовая, чеснок свежий, масло растительное, специи',
+    kbju: '92 ккал • Б: 1.6г • Ж: 4.5г • У: 11.2г',
+    price: 0.95,
+    image: 'https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?w=500&auto=format&fit=crop&q=80',
   },
   {
-    id: 'd12',
-    name: 'Булочка с маком и глазурью',
-    category: 'Хлебобулочные изделия',
-    weight: '80 г',
-    ingredients: 'Мука пшеничная в/с, маковая начинка, сливочное масло, сахарный сироп',
-    kbju: '240 ккал • Б: 5г • Ж: 7г • У: 41г',
+    id: 'cold-6',
+    name: 'Салат из птицы с грибами',
+    category: 'Холодные блюда',
+    weight: '100 г',
+    ingredients: 'Цыплята-бройлеры, шампиньоны свежие, сыр твердый, огурцы консервированные, яйца, лук репчатый, майонез',
+    kbju: '215 ккал • Б: 13.6г • Ж: 16.8г • У: 3.4г',
+    price: 2.45,
+    image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'cold-7',
+    name: 'Салат "Радуга"',
+    category: 'Холодные блюда',
+    weight: '140 г',
+    ingredients: 'Морковь свежая, сыр твердый, чеснок свежий, огурцы свежие, помидоры свежие, яйца, майонез',
+    kbju: '185 ккал • Б: 7.2г • Ж: 14.5г • У: 6.8г',
+    price: 2.20,
+    image: '/dishes/carrot-cheese-salad.jpg',
+  },
+  {
+    id: 'cold-8',
+    name: 'Сметана порционная',
+    category: 'Холодные блюда',
+    weight: '100 г',
+    ingredients: 'Сметана пастеризованная натуральная «Беллакт» 20%',
+    kbju: '206 ккал • Б: 2.6г • Ж: 20.0г • У: 3.4г',
     price: 1.10,
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1571212515416-fef01fc43637?w=500&auto=format&fit=crop&q=80',
+  },
+
+  // ==================== 2. ПЕРВЫЕ БЛЮДА (3 позиции) ====================
+  {
+    id: 'soup-1',
+    name: 'Суп картофельный с фасолью',
+    category: 'Первые блюда',
+    weight: '250 г',
+    ingredients: 'Картофель отборный, фасоль красная/белая, морковь, лук пассерованный, бульон, зелень петрушки',
+    kbju: '145 ккал • Б: 6.2г • Ж: 3.8г • У: 21.5г',
+    price: 1.30,
+    image: '/dishes/bean-potato-soup.jpg',
   },
   {
-    id: 'd13',
-    name: 'Хлеб ржано-пшеничный «Волковысский»',
-    category: 'Хлебобулочные изделия',
-    weight: '50 г (2 кусочка)',
-    ingredients: 'Мука ржаная сеяная, мука пшеничная, солод, закваска',
-    kbju: '90 ккал • Б: 3г • Ж: 1г • У: 19г',
-    price: 0.30,
-    image: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=400&auto=format&fit=crop&q=80',
+    id: 'soup-2',
+    name: 'Суп молочный с макаронными изделиями',
+    category: 'Первые блюда',
+    weight: '250 г',
+    ingredients: 'Молоко натуральное «Беллакт» 3.2%, макаронные изделия высшего сорта, масло сливочное «Беллакт», сахар, соль',
+    kbju: '185 ккал • Б: 6.8г • Ж: 6.5г • У: 25.2г',
+    price: 1.25,
+    image: '/dishes/pasta-broth-soup.jpg',
   },
   {
-    id: 'd14',
-    name: 'Компот из лесных ягод и клюквы',
+    id: 'soup-3',
+    name: 'Борщ с капустой и картофелем',
+    category: 'Первые блюда',
+    weight: '250/10 г',
+    ingredients: 'Свекла столовая, капуста белокочанная, картофель, морковь, лук, томатная паста, сметана «Беллакт», зелень',
+    kbju: '165 ккал • Б: 4.8г • Ж: 7.2г • У: 20.4г',
+    price: 1.55,
+    image: '/dishes/traditional-borscht.jpg',
+  },
+
+  // ==================== 3. ВТОРЫЕ БЛЮДА (5 позиций) ====================
+  {
+    id: 'main-1',
+    name: 'Котлеты рубленые из цыплят-бройлеров',
+    category: 'Вторые блюда',
+    weight: '100/5 г',
+    ingredients: 'Мясо цыплят-бройлеров рубленое, хлеб пшеничный, сухари панировочные, лук репчатый, специи',
+    kbju: '265 ккал • Б: 19.5г • Ж: 14.8г • У: 13.2г',
+    price: 3.20,
+    image: '/dishes/chicken-cutlets.jpg',
+  },
+  {
+    id: 'main-2',
+    name: 'Мясо отварное (свинина)',
+    category: 'Вторые блюда',
+    weight: '75 г',
+    ingredients: 'Свинина постная отварная, бульон натуральный, лавровый лист, черный перец горошком',
+    kbju: '218 ккал • Б: 21.0г • Ж: 15.0г • У: 0.0г',
+    price: 3.60,
+    image: '/dishes/boiled-pork-plate.jpg',
+  },
+  {
+    id: 'main-3',
+    name: 'Жаркое по-домашнему',
+    category: 'Вторые блюда',
+    weight: '300 г',
+    ingredients: 'Свинина отборная тушеная, картофель молодой, лук репчатый, соус томатный домашний, чеснок, специи',
+    kbju: '385 ккал • Б: 22.4г • Ж: 20.6г • У: 27.5г',
+    price: 4.20,
+    image: 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'main-4',
+    name: 'Рыба жареная (филе)',
+    category: 'Вторые блюда',
+    weight: '100 г',
+    ingredients: 'Филе хека натуральное, мука пшеничная в/с, масло растительное, специи для рыбы, лимон',
+    kbju: '190 ккал • Б: 20.2г • Ж: 8.9г • У: 7.2г',
+    price: 3.40,
+    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'main-5',
+    name: 'Поджарка',
+    category: 'Вторые блюда',
+    weight: '75/25 г',
+    ingredients: 'Свинина соломкой, лук репчатый пассерованный, соус томатный, перец черный, зелень',
+    kbju: '275 ккал • Б: 18.2г • Ж: 21.0г • У: 4.2г',
+    price: 3.35,
+    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop&q=80',
+  },
+
+  // ==================== 4. ГАРНИРЫ (3 позиции) ====================
+  {
+    id: 'side-1',
+    name: 'Картофель запеченный',
+    category: 'Гарниры',
+    weight: '150 г',
+    ingredients: 'Картофель дольками, масло растительное, паприка, розмарин, соль',
+    kbju: '162 ккал • Б: 2.8г • Ж: 5.4г • У: 26.0г',
+    price: 1.20,
+    image: 'https://images.unsplash.com/photo-1518013034458-30b0ee243591?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'side-2',
+    name: 'Каша гречневая',
+    category: 'Гарниры',
+    weight: '150 г',
+    ingredients: 'Крупа гречневая ядрица, масло сливочное «Беллакт», соль пищевая',
+    kbju: '175 ккал • Б: 5.5г • Ж: 4.8г • У: 28.5г',
+    price: 0.85,
+    image: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'side-3',
+    name: 'Смесь овощная "VIP"',
+    category: 'Гарниры',
+    weight: '100 г',
+    ingredients: 'Брокколи, капуста цветная, стручковая фасоль, морковь беби, кукуруза десертная, сливочное масло',
+    kbju: '78 ккал • Б: 2.9г • Ж: 3.2г • У: 9.6г',
+    price: 1.50,
+    image: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef2396e?w=500&auto=format&fit=crop&q=80',
+  },
+
+  // ==================== 5. НАПИТКИ (11 позиций) ====================
+  {
+    id: 'drink-1',
+    name: 'Нектар апельсиновый порционный',
     category: 'Напитки',
-    weight: '250 мл',
-    ingredients: 'Черника, брусника, клюква свежая, сахарный сироп, мята',
-    kbju: '85 ккал • Б: 0г • Ж: 0г • У: 21г',
-    price: 1.00,
-    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&auto=format&fit=crop&q=80',
+    weight: '200 г',
+    ingredients: 'Апельсиновый сок концентрированный, сахарный сироп, регулятор кислотности',
+    kbju: '94 ккал • Б: 0.4г • Ж: 0.0г • У: 23.0г',
+    price: 1.45,
+    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-2',
+    name: 'Нектар "Тропиканка" порционный',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Смесь соков тропических фруктов (манго, маракуйя, апельсин, ананас), сахарный сироп',
+    kbju: '96 ккал • Б: 0.3г • Ж: 0.0г • У: 23.8г',
+    price: 1.45,
+    image: 'https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-3',
+    name: 'Кефир порционный',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Кефир натуральный 2.5% «Беллакт» на живых кефирных грибках',
+    kbju: '106 ккал • Б: 5.6г • Ж: 5.0г • У: 8.0г',
+    price: 0.90,
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-4',
+    name: 'Чай без сахара',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Чай черный байховый высшего сорта свежезаваренный',
+    kbju: '2 ккал • Б: 0.1г • Ж: 0.0г • У: 0.3г',
+    price: 0.35,
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-5',
+    name: 'Молоко порционное',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Молоко питьевое пастеризованное «Беллакт» 3.2%',
+    kbju: '118 ккал • Б: 6.0г • Ж: 6.4г • У: 9.4г',
+    price: 0.80,
+    image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-6',
+    name: 'Сок томатный с мякотью',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Томатный сок прямого отжима с мякотью, соль пищевая йодированная',
+    kbju: '42 ккал • Б: 1.6г • Ж: 0.2г • У: 8.4г',
+    price: 1.20,
+    image: 'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-7',
+    name: 'Компот из смеси сухофруктов',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Яблоки сушеные, груши, изюм, чернослив, сахарный сироп',
+    kbju: '88 ккал • Б: 0.4г • Ж: 0.0г • У: 21.6г',
+    price: 0.70,
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-8',
+    name: 'Нектар ананасовый порционный',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Ананасовый концентрированный сок, подготовленная вода, сахарный сироп',
+    kbju: '98 ккал • Б: 0.3г • Ж: 0.0г • У: 24.2г',
+    price: 1.45,
+    image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-9',
+    name: 'Чай с сахаром',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Чай черный байховый свежезаваренный, сахар-песок',
+    kbju: '58 ккал • Б: 0.1г • Ж: 0.0г • У: 14.5г',
+    price: 0.45,
+    image: 'https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-10',
+    name: 'Сок березовый порционный 0.75',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Сок березовый натуральный, сахар, кислота лимонная',
+    kbju: '52 ккал • Б: 0.1г • Ж: 0.0г • У: 13.0г',
+    price: 0.90,
+    image: 'https://images.unsplash.com/photo-1546853020-ca4909aef454?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'drink-11',
+    name: 'Компот из свежих яблок',
+    category: 'Напитки',
+    weight: '200 г',
+    ingredients: 'Яблоки свежие отборные садовые, сахарный сироп, вода',
+    kbju: '76 ккал • Б: 0.3г • Ж: 0.0г • У: 18.8г',
+    price: 0.65,
+    image: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500&auto=format&fit=crop&q=80',
+  },
+
+  // ==================== 6. КОНДИТЕРСКИЕ И МУЧНЫЕ ИЗДЕЛИЯ (5 позиций) ====================
+  {
+    id: 'pastry-1',
+    name: 'Ватрушка с творогом',
+    category: 'Кондитерские и мучные изделия',
+    weight: '75 г',
+    ingredients: 'Тесто дрожжевое сдобное, начинка из натурального творога «Беллакт» 9%, ванилин',
+    kbju: '215 ккал • Б: 8.2г • Ж: 6.4г • У: 31.0г',
+    price: 1.40,
+    image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'pastry-2',
+    name: 'Пирожки печеные с начинкой вареная сгущенка',
+    category: 'Кондитерские и мучные изделия',
+    weight: '75 г',
+    ingredients: 'Тесто сдобное печеное румяное, начинка: цельное сгущенное молоко вареное «Беллакт»',
+    kbju: '248 ккал • Б: 5.6г • Ж: 7.2г • У: 40.5г',
+    price: 1.30,
+    image: 'https://images.unsplash.com/photo-1621236378699-8597faf6a173?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'pastry-3',
+    name: 'Пирожки жареные с начинкой вареная сгущенка',
+    category: 'Кондитерские и мучные изделия',
+    weight: '75 г',
+    ingredients: 'Тесто дрожжевое жареное во фритюре, начинка: натуральная вареная сгущенка «Беллакт»',
+    kbju: '272 ккал • Б: 5.2г • Ж: 11.4г • У: 37.2г',
+    price: 1.30,
+    image: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'pastry-4',
+    name: 'Бриошь с какао',
+    category: 'Кондитерские и мучные изделия',
+    weight: '100 г',
+    ingredients: 'Сдобное воздушное тесто на сливочном масле, натуральный какао-порошок «Беллакт», сахарная глазурь',
+    kbju: '340 ккал • Б: 7.8г • Ж: 14.5г • У: 44.8г',
+    price: 1.80,
+    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'pastry-5',
+    name: 'Сырники п/ф',
+    category: 'Кондитерские и мучные изделия',
+    weight: '110/20 г',
+    ingredients: 'Полуфабрикат сырников из отборного творога «Беллакт», мука в/с, сметана «Беллакт» / ягодный джем',
+    kbju: '280 ккал • Б: 16.5г • Ж: 11.2г • У: 28.0г',
+    price: 2.70,
+    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=500&auto=format&fit=crop&q=80',
+  },
+
+  // ==================== 7. ХЛЕБОБУЛОЧНЫЕ ИЗДЕЛИЯ (4 позиции) ====================
+  {
+    id: 'bread-1',
+    name: 'Хлеб черный',
+    category: 'Хлебобулочные изделия',
+    weight: '1 кус (35 г)',
+    ingredients: 'Мука ржаная хлебопекарная обдирная, закваска, солод, соль',
+    kbju: '72 ккал • Б: 2.2г • Ж: 0.4г • У: 14.8г',
+    price: 0.18,
+    image: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bread-2',
+    name: 'Батон',
+    category: 'Хлебобулочные изделия',
+    weight: '1 кус (35 г)',
+    ingredients: 'Мука пшеничная высшего сорта, вода, дрожжи, сахар, масло растительное',
+    kbju: '92 ккал • Б: 2.8г • Ж: 1.1г • У: 18.2г',
+    price: 0.18,
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bread-3',
+    name: 'Хлеб пшеничный "Мультизлаковый микс"',
+    category: 'Хлебобулочные изделия',
+    weight: '1 кус (40 г)',
+    ingredients: 'Мука пшеничная 1 сорт, семена льна, кунжут, хлопья овсяные, солод',
+    kbju: '98 ккал • Б: 3.4г • Ж: 2.2г • У: 16.5г',
+    price: 0.25,
+    image: 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bread-4',
+    name: 'Хлеб "Бородинский"',
+    category: 'Хлебобулочные изделия',
+    weight: '1 кус (35 г)',
+    ingredients: 'Мука ржаная обойная, мука пшеничная 2 сорт, солод ржаной ферментированный, кориандр, патока',
+    kbju: '76 ккал • Б: 2.4г • Ж: 0.5г • У: 15.6г',
+    price: 0.22,
+    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=500&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -246,10 +502,10 @@ export function generateCanteenDays(): CanteenDayItem[] {
     cur.setDate(cur.getDate() - 1);
   }
 
-  return workdays.map((d) => {
+  return workdays.map((d, index) => {
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    const isToday = dateStr === todayStr;
-    const isPast = dateStr < todayStr;
+    const isToday = dateStr === todayStr || (now.getDay() === 0 || now.getDay() === 6 ? index === workdays.length - 1 : false);
+    const isPast = !isToday && dateStr < todayStr;
     const label = `${weekDayNames[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')} ${ruMonths[d.getMonth()]}`;
     return {
       label,
@@ -269,29 +525,37 @@ export default function Canteen() {
     return todayIdx !== -1 ? todayIdx : list.length - 1;
   });
   const [activeCategory, setActiveCategory] = useState<string>('Все');
-  const [cart, setCart] = useState<Record<string, number>>({
-    d1: 1, // Pre-selected 1 borscht
-    d4: 1, // 1 cutlet
-    d9: 1, // 1 mashed potato
-  });
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [cart, setCart] = useState<Record<string, number>>({});
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
-  const [selectedShiftTime, setSelectedShiftTime] = useState('12:30 - 13:00 (Обед смены №1)');
-  const [lastOrderNumber, setLastOrderNumber] = useState('ОБЕД-8821');
 
   const currentDay = daysList[dayIndex] || daysList[daysList.length - 1];
-  const isToday = currentDay?.isToday;
-  const isPast = currentDay?.isPast;
 
-  const filteredDishes =
-    activeCategory === 'Все'
-      ? DISHES_DATABASE
-      : DISHES_DATABASE.filter((d) => d.category === activeCategory);
+  const totalCartCount: number = (Object.values(cart) as number[]).reduce((a: number, b: number) => a + b, 0);
+  const totalCartPrice: number = (Object.entries(cart) as [string, number][]).reduce((sum: number, [id, count]: [string, number]) => {
+    const dish = DISHES_DATABASE.find((d) => d.id === id);
+    return sum + (dish ? dish.price * Number(count) : 0);
+  }, 0);
+
+  const filteredDishes = DISHES_DATABASE.filter((dish) => {
+    if (activeCategory === 'В талоне') {
+      if (!cart[dish.id] || cart[dish.id] <= 0) return false;
+    } else if (activeCategory !== 'Все' && dish.category !== activeCategory) {
+      return false;
+    }
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+    return (
+      dish.name.toLowerCase().includes(query) ||
+      dish.ingredients.toLowerCase().includes(query) ||
+      dish.category.toLowerCase().includes(query)
+    );
+  });
 
   const addToCart = (dishId: string) => {
-    if (!isToday) {
-      toast.info('Предзаказ доступен только на сегодняшнюю смену');
+    if (currentDay.isPast) {
+      toast.info('Предзаказ недоступен на прошедшую дату');
       return;
     }
     setCart((prev) => ({
@@ -312,26 +576,37 @@ export default function Canteen() {
     });
   };
 
-  const totalCartCount: number = (Object.values(cart) as number[]).reduce((a: number, b: number) => a + b, 0);
-  const totalCartPrice: number = (Object.entries(cart) as [string, number][]).reduce((sum: number, [id, count]: [string, number]) => {
-    const dish = DISHES_DATABASE.find((d) => d.id === id);
-    return sum + (dish ? dish.price * Number(count) : 0);
-  }, 0);
+  const removeEntireDishFromCart = (dishId: string) => {
+    setCart((prev) => {
+      const next = { ...prev };
+      delete next[dishId];
+      return next;
+    });
+    toast.info('Блюдо удалено из талона');
+  };
+
+  const clearEntireCart = () => {
+    setCart({});
+    setIsOrderModalOpen(false);
+    toast.info('Обеденный талон очищен');
+  };
 
   const handleOrderSubmit = () => {
     if (totalCartCount === 0) {
       toast.error('Корзина пуста');
       return;
     }
-    const newOrderNum = `ОБЕД-${Math.floor(1000 + Math.random() * 9000)}`;
-    setLastOrderNumber(newOrderNum);
     setIsOrderModalOpen(false);
-    setIsReceiptOpen(true);
-    toast.success('Предзаказ успешно оформлен! Сумма списана в счёт заработной платы.');
+    setCart({});
+    toast.success('Предзаказ успешно оформлен! Заказ передан на раздачу столовой.', {
+      duration: 4000,
+    });
   };
 
+  const cartEntries = Object.entries(cart).filter(([_, count]) => Number(count) > 0) as [string, number][];
+
   return (
-    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-12">
+    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 pb-16">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3 shrink-0">
@@ -342,9 +617,14 @@ export default function Canteen() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-            Меню столовой
-          </h1>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
+              Меню столовой
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              ОАО «Беллакт» • 39 позиций в меню
+            </p>
+          </div>
         </div>
 
         {/* Days of Week Switcher (Mon-Fri) */}
@@ -361,117 +641,189 @@ export default function Canteen() {
               }`}
             >
               {item.label}
+              {item.isToday && <span className="ml-1 text-[10px] opacity-80">(сегодня)</span>}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Categories Bar */}
-      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            type="button"
-            onClick={() => setActiveCategory(cat)}
-            className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === cat
-                ? 'bg-[#002B7F] text-white shadow-xs'
-                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      {/* Search & Categories Bar */}
+      <div className="space-y-3">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Поиск блюд, ингредиентов (борщ, котлеты, сыр, хек...)"
+            className="pl-10 pr-9 h-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
+              title="Очистить поиск"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Categories Bar with Counts */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1">
+          {CATEGORIES.map((cat) => {
+            const count =
+              cat === 'Все'
+                ? DISHES_DATABASE.length
+                : DISHES_DATABASE.filter((d) => d.category === cat).length;
+
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  activeCategory === cat
+                    ? 'bg-[#002B7F] text-white shadow-xs'
+                    : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                {cat} ({count})
+              </button>
+            );
+          })}
+
+          {totalCartCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveCategory('В талоне')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                activeCategory === 'В талоне'
+                  ? 'bg-blue-800 text-white shadow-xs'
+                  : 'bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-[#002B7F] dark:text-blue-300 hover:bg-blue-100'
+              }`}
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              В талоне ({totalCartCount})
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Dishes Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-        {filteredDishes.map((dish) => {
-          const inCartCount = cart[dish.id] || 0;
+      {/* Dishes Grid or Empty State */}
+      {filteredDishes.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 text-center">
+          <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+            {activeCategory === 'В талоне'
+              ? 'В вашем талоне пока нет выбранных блюд. Добавьте желаемые блюда из меню ниже.'
+              : 'По вашему запросу ничего не найдено. Попробуйте изменить поисковый запрос или выбрать другую категорию.'}
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchQuery('');
+              setActiveCategory('Все');
+            }}
+            className="mt-4 text-xs font-semibold rounded-xl"
+          >
+            Показать все блюда (39)
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+          {filteredDishes.map((dish) => {
+            const inCartCount = cart[dish.id] || 0;
 
-          return (
-            <div
-              key={dish.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2.5 left-2.5 bg-black/75 text-white text-xs font-semibold px-2 py-0.5 rounded-md">
-                    {dish.weight}
+            return (
+              <div
+                key={dish.id}
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img
+                      src={dish.image}
+                      alt={dish.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute top-2.5 left-2.5 bg-black/75 text-white text-xs font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs">
+                      {dish.weight}
+                    </div>
+                    <div className="absolute top-2.5 right-2.5 bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 font-bold text-xs px-2.5 py-0.5 rounded-md shadow-2xs border border-slate-100 dark:border-slate-700">
+                      {dish.price.toFixed(2)} руб.
+                    </div>
                   </div>
-                  <div className="absolute top-2.5 right-2.5 bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 font-bold text-xs px-2.5 py-0.5 rounded-md shadow-2xs border border-slate-100 dark:border-slate-700">
-                    {dish.price.toFixed(2)} руб.
+
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
+                      {dish.name}
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                      {dish.ingredients}
+                    </p>
+                    <div className="text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 px-2 py-1 rounded-md">
+                      {dish.kbju}
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 space-y-2">
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-2">
-                    {dish.name}
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                    {dish.ingredients}
-                  </p>
-                  <div className="text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 px-2 py-1 rounded-md">
-                    {dish.kbju}
-                  </div>
-                </div>
-              </div>
-
-              {/* Add to Cart / Quantity controls */}
-              <div className="p-4 pt-0">
-                {isToday ? (
-                  inCartCount > 0 ? (
+                {/* Add to Cart / Quantity controls */}
+                <div className="p-4 pt-0">
+                  {inCartCount > 0 ? (
                     <div className="flex items-center justify-between bg-[#E8F1FC] dark:bg-blue-950/40 rounded-xl p-1 border border-blue-100 dark:border-blue-900/50">
                       <button
                         type="button"
                         onClick={() => removeFromCart(dish.id)}
-                        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-[#002B7F] dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer transition-colors"
+                        title="Уменьшить количество или удалить"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="font-bold text-sm text-[#002B7F] dark:text-blue-300">
+                      <span className="font-bold text-xs sm:text-sm text-[#002B7F] dark:text-blue-300">
                         {inCartCount} шт.
                       </span>
                       <button
                         type="button"
                         onClick={() => addToCart(dish.id)}
-                        className="w-8 h-8 rounded-lg bg-[#002B7F] hover:bg-[#0B4DA2] text-white flex items-center justify-center font-bold text-sm shadow-2xs cursor-pointer transition-colors"
+                        disabled={currentDay.isPast}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-2xs transition-colors ${
+                          currentDay.isPast
+                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                            : 'bg-[#002B7F] hover:bg-[#0B4DA2] text-white cursor-pointer'
+                        }`}
+                        title={currentDay.isPast ? 'Заказ на прошедшую дату недоступен' : 'Добавить ещё'}
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
+                  ) : currentDay.isPast ? (
+                    <Button
+                      disabled
+                      variant="secondary"
+                      className="w-full rounded-xl text-xs font-semibold h-9 opacity-60 bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed"
+                    >
+                      Заказ недоступен
+                    </Button>
                   ) : (
                     <Button
                       onClick={() => addToCart(dish.id)}
                       className="w-full bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold h-9 shadow-xs cursor-pointer transition-colors"
                     >
                       <Plus className="w-3.5 h-3.5 mr-1.5 stroke-[2.5px]" />
-                      В обеденный талон
+                      Добавить
                     </Button>
-                  )
-                ) : (
-                  <Button
-                    disabled
-                    variant="secondary"
-                    className="w-full rounded-xl text-xs font-semibold h-9 opacity-60 dark:bg-slate-800 dark:text-slate-400"
-                  >
-                    Заказ недоступен
-                  </Button>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Sticky Bottom Cart Bar (if items in cart and today) */}
-      {isToday && totalCartCount > 0 && (
+      {/* Sticky Bottom Cart Bar (if items in cart) */}
+      {totalCartCount > 0 && (
         <div className="fixed bottom-20 sm:bottom-24 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 pointer-events-none">
           <div className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto">
             <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto pointer-events-auto">
@@ -484,12 +836,23 @@ export default function Canteen() {
                     Итого: {totalCartPrice.toFixed(2)} руб.
                   </div>
                 </div>
-                <Button
-                  onClick={() => setIsOrderModalOpen(true)}
-                  className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-4 py-2 text-xs sm:text-sm shadow-md cursor-pointer"
-                >
-                  Оформить заказ
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={clearEntireCart}
+                    className="text-blue-200 hover:text-white hover:bg-blue-800/60 rounded-xl px-2.5 py-1.5 text-xs font-semibold"
+                    title="Очистить всё"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    Очистить
+                  </Button>
+                  <Button
+                    onClick={() => setIsOrderModalOpen(true)}
+                    className="bg-white hover:bg-slate-100 text-[#002B7F] font-extrabold rounded-xl px-4 py-2 text-xs sm:text-sm shadow-md cursor-pointer"
+                  >
+                    Оформить заказ
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -503,31 +866,80 @@ export default function Canteen() {
             <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
               Оформление предзаказа в столовой
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              Сумма будет списана с лицевого счёта сотрудника при начислении заработной платы.
-            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
-            {/* Selected dishes breakdown */}
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
-              {(Object.entries(cart) as [string, number][]).map(([id, count]) => {
-                const dish = DISHES_DATABASE.find((d) => d.id === id);
-                if (!dish) return null;
-                return (
-                  <div key={id} className="flex justify-between items-center pt-2 first:pt-0">
-                    <div>
-                      <div className="font-semibold text-slate-900 dark:text-white">{dish.name}</div>
-                      <div className="text-slate-500 dark:text-slate-400 text-xs">
-                        {count} × {dish.price.toFixed(2)} руб.
+            {/* Selected dishes breakdown with active removal & quantity editing */}
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+              {cartEntries.length === 0 ? (
+                <div className="py-6 text-center text-slate-500 dark:text-slate-400 text-xs">
+                  В талоне нет выбранных блюд
+                </div>
+              ) : (
+                cartEntries.map(([id, count]) => {
+                  const dish = DISHES_DATABASE.find((d) => d.id === id);
+                  if (!dish) return null;
+                  return (
+                    <div key={id} className="flex justify-between items-center py-2.5 first:pt-0">
+                      <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                        <img
+                          src={dish.image}
+                          alt={dish.name}
+                          className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="min-w-0">
+                          <div className="font-semibold text-slate-900 dark:text-white truncate">
+                            {dish.name}
+                          </div>
+                          <div className="text-slate-500 dark:text-slate-400 text-xs">
+                            {dish.price.toFixed(2)} руб. / шт.
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
+                          <button
+                            type="button"
+                            onClick={() => removeFromCart(dish.id)}
+                            className="w-6 h-6 rounded bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                            title="Уменьшить"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-7 text-center font-bold text-xs text-slate-900 dark:text-white">
+                            {count}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => addToCart(dish.id)}
+                            disabled={currentDay.isPast}
+                            className={`w-6 h-6 rounded flex items-center justify-center transition-colors ${
+                              currentDay.isPast
+                                ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                                : 'bg-[#002B7F] text-white hover:bg-[#0B4DA2] cursor-pointer'
+                            }`}
+                            title={currentDay.isPast ? 'Недоступно' : 'Увеличить'}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div className="w-16 text-right font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                          {(dish.price * Number(count)).toFixed(2)} руб.
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeEntireDishFromCart(dish.id)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+                          title="Удалить из заказа"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="font-bold text-slate-900 dark:text-white">
-                      {(dish.price * Number(count)).toFixed(2)} руб.
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
 
             <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-between items-center">
@@ -556,50 +968,14 @@ export default function Canteen() {
               onClick={() => setIsOrderModalOpen(false)}
               className="rounded-xl text-xs sm:text-sm font-semibold border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
             >
-              Отмена
+              Закрыть
             </Button>
             <Button
               onClick={handleOrderSubmit}
-              className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors"
+              disabled={totalCartCount === 0 || currentDay.isPast}
+              className="bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Подтвердить заказ
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* QR Code Receipt Modal */}
-      <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 border-slate-200 dark:border-slate-800 shadow-xl text-center">
-          <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-emerald-50 dark:ring-emerald-900/30">
-            <CheckCircle2 className="w-8 h-8" />
-          </div>
-          <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
-            Электронный талон на обед
-          </DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">
-            Предъявите QR-код на раздаче в столовой или на кассе
-          </DialogDescription>
-
-          <div className="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex flex-col items-center justify-center space-y-3">
-            {/* Realistic QR Visual */}
-            <div className="w-40 h-40 bg-white p-2 rounded-xl border border-slate-200 dark:border-slate-600 shadow-2xs flex items-center justify-center">
-              <QrCode className="w-32 h-32 text-[#002B7F]" />
-            </div>
-            <div className="font-mono text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-              Талон: {lastOrderNumber}
-            </div>
-            <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-              {employeeData?.full_name || 'Иванов Иван Иванович'} • Таб. № {employeeData?.tab_number || '20481'}
-            </div>
-          </div>
-
-          <div className="mt-5">
-            <Button
-              onClick={() => setIsReceiptOpen(false)}
-              className="w-full bg-[#002B7F] hover:bg-[#0B4DA2] text-white rounded-xl font-bold text-xs sm:text-sm py-2.5 cursor-pointer transition-colors"
-            >
-              Понятно
             </Button>
           </div>
         </DialogContent>

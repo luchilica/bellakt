@@ -47,7 +47,7 @@ export const ALL_AVAILABLE_NAV_ITEMS: Record<NavItemKey, NavItemConfig> = {
   },
   certificates: {
     id: 'certificates',
-    label: 'ЗАПРОС СПРАВОК',
+    label: 'ЗАПРОС СПРАВКИ',
     shortLabel: 'Справки',
     path: '/certificates',
     iconName: 'Landmark',
@@ -55,11 +55,11 @@ export const ALL_AVAILABLE_NAV_ITEMS: Record<NavItemKey, NavItemConfig> = {
   },
   notifications: {
     id: 'notifications',
-    label: 'УВЕДОМЛЕНИЯ',
+    label: 'УВЕДОМЛЕНИЯ И ВАКАНСИИ',
     shortLabel: 'Уведомления',
-    path: '/?notifications=open',
+    path: '/notifications',
     iconName: 'Bell',
-    description: 'Приказы завода, объявления и вакансии',
+    description: 'Электронное табло, объявления и вакансии',
   },
 };
 

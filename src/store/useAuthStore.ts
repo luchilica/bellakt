@@ -38,7 +38,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         position: 'Инженер-технолог молочного производства',
         department: 'Цех детского питания №1',
         email: 'ivanov@bellakt.by',
-        avatar_url: '',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
       },
       isLoading: false,
     });

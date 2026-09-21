@@ -159,7 +159,12 @@ export function Layout() {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 flex-1 flex flex-col justify-start md:justify-center">
+      <main
+        className={cn(
+          'w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 flex-1 flex flex-col justify-start',
+          isHomeActive && 'md:justify-center'
+        )}
+      >
         <Outlet />
       </main>
 

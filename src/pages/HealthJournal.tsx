@@ -47,7 +47,11 @@ export default function HealthJournal() {
       if (lastRecord) {
         setSelfStatus(lastRecord.selfStatus === 'ill' ? 'ill' : 'healthy');
         setFamilyStatus(lastRecord.familyStatus === 'ill' ? 'ill' : 'healthy');
-        setLastAllowed(lastRecord.selfStatus === 'healthy');
+        const allowed =
+          lastRecord.allowed !== undefined
+            ? lastRecord.allowed
+            : lastRecord.selfStatus === 'healthy' && lastRecord.familyStatus === 'healthy';
+        setLastAllowed(allowed);
       }
       return;
     }
@@ -64,15 +68,15 @@ export default function HealthJournal() {
           .maybeSingle();
 
         if (data) {
-          const isHealthy = data.self_status !== 'ill';
+          const isAllowed = data.self_status !== 'ill' && data.family_status !== 'on_treatment';
           setSelfStatus(data.self_status === 'ill' ? 'ill' : 'healthy');
           setFamilyStatus(data.family_status === 'on_treatment' ? 'ill' : 'healthy');
-          setLastAllowed(isHealthy);
+          setLastAllowed(isAllowed);
           setIsSubmitted(true);
           markCheckIn({
             selfStatus: data.self_status === 'ill' ? 'ill' : 'healthy',
             familyStatus: data.family_status === 'on_treatment' ? 'ill' : 'healthy',
-            allowed: isHealthy,
+            allowed: isAllowed,
           });
         }
       } catch (err) {
@@ -95,7 +99,7 @@ export default function HealthJournal() {
 
         if (data && data.length > 0) {
           const dbItems: HealthHistoryItem[] = data.map((d) => {
-            const isHealthy = d.self_status !== 'ill';
+            const isAllowed = d.self_status !== 'ill' && d.family_status !== 'on_treatment';
             const time = d.confirmed_at
               ? new Date(d.confirmed_at).toLocaleTimeString('ru-RU', {
                   hour: '2-digit',
@@ -109,7 +113,7 @@ export default function HealthJournal() {
               time,
               selfStatus: d.self_status === 'ill' ? 'ill' : 'healthy',
               familyStatus: d.family_status === 'on_treatment' ? 'ill' : 'healthy',
-              allowed: isHealthy,
+              allowed: isAllowed,
             };
           });
 
@@ -133,9 +137,9 @@ export default function HealthJournal() {
     e.preventDefault();
 
     setLoading(true);
-    // Логика допуска: если сам сотрудник здоров — он допускается к смене,
-    // даже если члены семьи находятся на лечении. Если сам болеет — не допускается.
-    const isAllowed = selfStatus === 'healthy';
+    // Логика допуска: если сам сотрудник болеет ИЛИ члены семьи болеют/находятся на лечении —
+    // сотрудник НЕ допускается к рабочей смене и направляется в медицинский пункт предприятия.
+    const isAllowed = selfStatus === 'healthy' && familyStatus === 'healthy';
     setLastAllowed(isAllowed);
 
     try {
@@ -219,7 +223,7 @@ export default function HealthJournal() {
   };
 
   return (
-    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-10">
+    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 pb-10">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -241,7 +245,10 @@ export default function HealthJournal() {
         <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
           <button
             type="button"
-            onClick={() => setActiveTab('today')}
+            onClick={() => {
+              setActiveTab('today');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'today'
                 ? 'bg-[#002B7F] text-white shadow-xs'
@@ -253,7 +260,10 @@ export default function HealthJournal() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('history')}
+            onClick={() => {
+              setActiveTab('history');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'history'
                 ? 'bg-[#002B7F] text-white shadow-xs'
@@ -297,7 +307,11 @@ export default function HealthJournal() {
                       <span>Пожалуйста, обратитесь в медицинский пункт</span>
                     </div>
                     <p className="text-xs sm:text-sm text-red-100 mt-1 font-medium">
-                      Зафиксированы признаки недомогания. Допуск к рабочей смене приостановлен до осмотра дежурным фельдшером предприятия (каб. 102).
+                      {selfStatus === 'ill' && familyStatus === 'ill'
+                        ? 'Зафиксированы признаки недомогания у сотрудника и членов семьи. Допуск к рабочей смене приостановлен до осмотра дежурным фельдшером предприятия (каб. 102).'
+                        : familyStatus === 'ill'
+                        ? 'Зафиксировано заболевание членов семьи. В соответствии с санитарно-эпидемиологическими нормами пищевого производства допуск приостановлен до осмотра дежурным фельдшером предприятия (каб. 102).'
+                        : 'Зафиксированы признаки недомогания. Допуск к рабочей смене приостановлен до осмотра дежурным фельдшером предприятия (каб. 102).'}
                     </p>
                   </div>
                 </div>
@@ -610,7 +624,10 @@ export default function HealthJournal() {
               </div>
             ) : (
               filteredHistory.map((rec) => {
-                const isRecAllowed = rec.selfStatus === 'healthy';
+                const isRecAllowed =
+                  rec.allowed !== undefined
+                    ? rec.allowed
+                    : rec.selfStatus === 'healthy' && rec.familyStatus === 'healthy';
                 return (
                   <div
                     key={rec.id || rec.date}

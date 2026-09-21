@@ -6,12 +6,12 @@ import { cn } from '../lib/utils';
 import { toast } from 'sonner';
 
 export function ThemeSettingsCard() {
-  const { theme, setTheme, resolvedTheme, systemTheme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const handleSelect = (selectedTheme: Theme) => {
     setTheme(selectedTheme);
     const messages: Record<Theme, string> = {
-      system: `Включена системная тема (сейчас ${systemTheme === 'dark' ? 'тёмная' : 'светлая'})`,
+      system: 'Включена системная тема',
       light: 'Включена светлая тема оформления',
       dark: 'Включена тёмная тема оформления',
     };
@@ -20,31 +20,10 @@ export function ThemeSettingsCard() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100 dark:border-slate-800">
-        <div>
-          <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
-            Тема оформления интерфейса
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            Автоматическое определение по системным настройкам или ручной выбор
-          </div>
+      <div className="pb-1 border-b border-slate-100 dark:border-slate-800">
+        <div className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
+          Тема оформления интерфейса
         </div>
-
-        {/* Quick toggle button */}
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            toggleTheme();
-            toast.info('Тема переключена');
-          }}
-          className="rounded-xl text-xs font-semibold h-8 px-3 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white shadow-2xs self-start sm:self-auto flex items-center gap-1.5"
-          title="Быстрое переключение темы"
-        >
-          <RefreshCw className="w-3.5 h-3.5 text-[#002B7F] dark:text-[#60a5fa]" />
-          <span>Быстрое переключение</span>
-        </Button>
       </div>
 
       {/* 3 Option Segmented Cards */}
@@ -77,13 +56,8 @@ export function ThemeSettingsCard() {
               </span>
             )}
           </div>
-          <div>
-            <div className="font-bold text-sm text-slate-900 dark:text-white">
-              Светлая тема
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Классический стиль ОАО «Беллакт»
-            </div>
+          <div className="font-bold text-sm text-slate-900 dark:text-white">
+            Светлая тема
           </div>
         </button>
 
@@ -115,13 +89,8 @@ export function ThemeSettingsCard() {
               </span>
             )}
           </div>
-          <div>
-            <div className="font-bold text-sm text-slate-900 dark:text-white">
-              Тёмная тема
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Комфорт при слабом освещении
-            </div>
+          <div className="font-bold text-sm text-slate-900 dark:text-white">
+            Тёмная тема
           </div>
         </button>
 
@@ -153,44 +122,13 @@ export function ThemeSettingsCard() {
               </span>
             )}
           </div>
-          <div>
-            <div className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>Системная</span>
-              <span className="text-[10px] font-semibold bg-[#D6E6F9] dark:bg-blue-900/60 text-[#002B7F] dark:text-blue-200 px-1.5 py-0.5 rounded">
-                АВТО
-              </span>
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              По настройкам устройства
-            </div>
+          <div className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span>Системная</span>
+            <span className="text-[10px] font-semibold bg-[#D6E6F9] dark:bg-blue-900/60 text-[#002B7F] dark:text-blue-200 px-1.5 py-0.5 rounded">
+              АВТО
+            </span>
           </div>
         </button>
-      </div>
-
-      {/* Real-time status indicator */}
-      <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-          <span className="font-semibold text-slate-900 dark:text-white">Текущий режим:</span>
-          {theme === 'system' ? (
-            <span className="inline-flex items-center gap-1 font-medium text-[#002B7F] dark:text-blue-300">
-              <Laptop className="w-3.5 h-3.5" />
-              Автоматический (на устройстве: {systemTheme === 'dark' ? 'тёмная' : 'светлая'})
-            </span>
-          ) : theme === 'dark' ? (
-            <span className="inline-flex items-center gap-1 font-medium text-purple-600 dark:text-purple-300">
-              <Moon className="w-3.5 h-3.5" />
-              Тёмная (выбрана вручную)
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 font-medium text-amber-600 dark:text-amber-300">
-              <Sun className="w-3.5 h-3.5" />
-              Светлая (выбрана вручную)
-            </span>
-          )}
-        </div>
-        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-          {resolvedTheme === 'dark' ? 'DARK' : 'LIGHT'}
-        </span>
       </div>
     </div>
   );

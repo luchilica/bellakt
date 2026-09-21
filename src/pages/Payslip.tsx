@@ -199,12 +199,14 @@ export default function Payslip() {
   const handlePrevPeriod = () => {
     if (periodIndex < PERIODS.length - 1) {
       setPeriodIndex((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleNextPeriod = () => {
     if (periodIndex > 0) {
       setPeriodIndex((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -220,7 +222,7 @@ export default function Payslip() {
 
   return (
     <div
-      className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-10 border-[#fff6f5]"
+      className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 pb-10 border-[#fff6f5]"
       style={{ borderColor: '#fff6f5' }}
     >
       {/* Header with Month Arrow Switcher & Privacy Toggle */}

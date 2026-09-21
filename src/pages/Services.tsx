@@ -491,13 +491,20 @@ export default function Services() {
   const handlePrevPeriod = () => {
     if (periodIndex < PERIODS.length - 1) {
       setPeriodIndex((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleNextPeriod = () => {
     if (periodIndex > 0) {
       setPeriodIndex((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleTabChange = (tab: 'canteen' | 'salary' | 'telecom') => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 1. Calculate each receipt total dynamically
@@ -519,7 +526,7 @@ export default function Services() {
   const totalMonthDeductions = totalCanteen + totalSalaryServices + totalTelecom;
 
   return (
-    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 my-auto pb-10">
+    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 pb-10">
       {/* Top Header with Back Button, Title and < Месяц > Arrow Switcher */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -645,7 +652,7 @@ export default function Services() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <button
           type="button"
-          onClick={() => setActiveTab('canteen')}
+          onClick={() => handleTabChange('canteen')}
           className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center cursor-pointer border ${
             activeTab === 'canteen'
               ? 'bg-[#002B7F] border-[#002B7F] text-white shadow-xs'
@@ -657,7 +664,7 @@ export default function Services() {
 
         <button
           type="button"
-          onClick={() => setActiveTab('salary')}
+          onClick={() => handleTabChange('salary')}
           className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center cursor-pointer border ${
             activeTab === 'salary'
               ? 'bg-[#002B7F] border-[#002B7F] text-white shadow-xs'
@@ -669,7 +676,7 @@ export default function Services() {
 
         <button
           type="button"
-          onClick={() => setActiveTab('telecom')}
+          onClick={() => handleTabChange('telecom')}
           className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center cursor-pointer border ${
             activeTab === 'telecom'
               ? 'bg-[#002B7F] border-[#002B7F] text-white shadow-xs'
