@@ -13,7 +13,7 @@ import {
 
 export default function Dashboard() {
   const { employeeData } = useAuthStore();
-  const userName = employeeData?.full_name || 'Евгений Бороденя';
+  const userName = employeeData?.full_name || 'Иван Иванов';
   const { isCheckedInToday } = useHealthStore();
   const isCheckedIn = isCheckedInToday();
 

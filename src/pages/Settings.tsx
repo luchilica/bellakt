@@ -86,7 +86,7 @@ export default function Settings() {
   // Security request form state
   const [requestType, setRequestType] = useState<'password' | 'qrcode' | '2fa'>('qrcode');
   const [reason, setReason] = useState('Замена смартфона');
-  const [email, setEmail] = useState(employeeData?.email || 'e.borodenya@bellakt.by');
+  const [email, setEmail] = useState(employeeData?.email || 'ivanov@bellakt.by');
   const [comment, setComment] = useState('');
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [lastSubmittedId, setLastSubmittedId] = useState('');
@@ -497,7 +497,7 @@ export default function Settings() {
                     Идентификатор сотрудника
                   </Label>
                   <div className="h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
-                    {employeeData?.full_name || 'Бороденя Евгений Сергеевич'} (Таб. № {employeeData?.tab_number || '20481'})
+                    {employeeData?.full_name || 'Иванов Иван Иванович'} (Таб. № {employeeData?.tab_number || '20481'})
                   </div>
                 </div>
               </div>

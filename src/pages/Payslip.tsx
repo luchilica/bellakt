@@ -323,19 +323,14 @@ export default function Payslip() {
 
       {/* Employee Identity Strip - Minimalist, like HealthJournal, no badges/labels */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 flex items-center gap-3.5 shadow-2xs">
-        {employeeData?.avatar_url ? (
-          <img
-            src={employeeData.avatar_url}
-            alt={employeeData?.full_name || 'Сотрудник'}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-          />
-        ) : (
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E8F1FC] dark:bg-blue-950/60 text-[#0B4DA2] dark:text-blue-300 flex items-center justify-center font-bold text-sm sm:text-base shrink-0 border border-transparent dark:border-blue-800/40">
-            {employeeData?.full_name?.charAt(0) || 'Е'}
-          </div>
-        )}
+        <img
+          src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
+          alt={employeeData?.full_name || 'Иванов Иван Иванович'}
+          referrerPolicy="no-referrer"
+          className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+        />
         <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
-          {employeeData?.full_name || 'Бороденя Евгений Сергеевич'}
+          {employeeData?.full_name || 'Иванов Иван Иванович'}
         </div>
       </div>
 

@@ -97,7 +97,7 @@ export function Layout() {
         .slice(0, 2)
         .join('')
         .toUpperCase()
-    : 'ЕБ';
+    : 'ИИ';
 
   return (
     <div className="min-h-screen bg-[#EDF2F7] dark:bg-[#070e1b] flex flex-col justify-between text-slate-800 dark:text-slate-100 font-sans selection:bg-[#002B7F] selection:text-white transition-colors duration-200">
@@ -107,13 +107,24 @@ export function Layout() {
       <header className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 pb-2">
         {/* Top Row: Left Profile Circle | Center Official Logo | Right Settings Circle */}
         <div className="flex items-center justify-between gap-4">
-          {/* Left: Profile Circular Button (Same height as Logo) */}
+          {/* Left: Profile Circular Button (Same height as Logo) with Employee Photo */}
           <Link
             to="/profile"
-            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 2xl:w-16 2xl:h-16 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-[#002B7F] dark:hover:border-[#60a5fa] hover:shadow-md transition-all flex items-center justify-center text-[#002B7F] dark:text-[#60a5fa] font-bold text-xs sm:text-sm md:text-base 2xl:text-lg shrink-0 group select-none"
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 2xl:w-16 2xl:h-16 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-[#002B7F] dark:hover:border-[#60a5fa] hover:shadow-md transition-all flex items-center justify-center shrink-0 group select-none overflow-hidden"
             title="Личный профиль сотрудника"
           >
-            <span className="group-hover:scale-105 transition-transform">{initials}</span>
+            {employeeData?.avatar_url || '/ivan_ivanov.jpg' ? (
+              <img
+                src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
+                alt={employeeData?.full_name || 'Иван Иванов'}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+            ) : (
+              <span className="text-[#002B7F] dark:text-[#60a5fa] font-bold text-xs sm:text-sm md:text-base 2xl:text-lg group-hover:scale-105 transition-transform">
+                {initials}
+              </span>
+            )}
           </Link>
 
           {/* Center: Official Logo */}

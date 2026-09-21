@@ -17,11 +17,11 @@ import { PWAInstallButton } from '../components/PWAInstallButton';
 export default function Profile() {
   const { employeeData, logout } = useAuthStore();
 
-  const fullName = employeeData?.full_name || 'Бороденя Евгений Сергеевич';
+  const fullName = employeeData?.full_name || 'Иванов Иван Иванович';
   const tabNumber = employeeData?.tab_number || '20481';
-  const position = employeeData?.position || 'Инженер-технолог производства';
+  const position = employeeData?.position || 'Инженер-технолог молочного производства';
   const department = employeeData?.department || 'Цех детского питания №1';
-  const email = employeeData?.email || 'e.borodenya@bellakt.by';
+  const email = employeeData?.email || 'ivanov@bellakt.by';
   const phone = '+375 (29) 782-45-12';
   const passId = `BLT-PASS-2026-${tabNumber}-9812`;
 
@@ -53,9 +53,14 @@ export default function Profile() {
         <div id="profile-user-header" className="flex items-center gap-4 sm:gap-6 pb-5 border-b border-slate-100 dark:border-slate-800">
           <div
             id="profile-photo-square"
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/90 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/90 shrink-0 shadow-2xs overflow-hidden"
           >
-            <UserIcon className="w-10 h-10 sm:w-11 sm:h-11 text-slate-400 dark:text-slate-500 stroke-[1.5]" />
+            <img
+              src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
+              alt={fullName}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <div className="min-w-0">

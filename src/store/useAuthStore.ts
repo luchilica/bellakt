@@ -13,9 +13,22 @@ interface AuthState {
   loginAsDemo: () => void;
 }
 
+export const DEFAULT_EMPLOYEE = {
+  id: 'demo-employee-1',
+  tab_number: '20481',
+  full_name: 'Иванов Иван Иванович',
+  position: 'Инженер-технолог молочного производства',
+  department: 'Цех детского питания №1',
+  email: 'ivanov@bellakt.by',
+  avatar_url: '/ivan_ivanov.jpg',
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  employeeData: null,
+  user: {
+    id: 'demo-employee-1',
+    email: 'ivanov@bellakt.by',
+  } as unknown as User,
+  employeeData: DEFAULT_EMPLOYEE,
   isLoading: true,
   setUser: (user) => set({ user }),
   setEmployeeData: (data) => set({ employeeData: data }),
@@ -31,15 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     set({
       user: demoUser,
-      employeeData: {
-        id: 'demo-employee-1',
-        tab_number: '20481',
-        full_name: 'Иванов Иван Иванович',
-        position: 'Инженер-технолог молочного производства',
-        department: 'Цех детского питания №1',
-        email: 'ivanov@bellakt.by',
-        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
-      },
+      employeeData: DEFAULT_EMPLOYEE,
       isLoading: false,
     });
   },
@@ -66,13 +71,27 @@ export const useAuthStore = create<AuthState>((set) => ({
           .single();
         if (employee) {
           set({ employeeData: employee });
+        } else {
+          set({ employeeData: DEFAULT_EMPLOYEE });
         }
       } else {
-        set({ user: null, employeeData: null });
+        set({
+          user: {
+            id: 'demo-employee-1',
+            email: 'ivanov@bellakt.by',
+          } as unknown as User,
+          employeeData: DEFAULT_EMPLOYEE,
+        });
       }
     } catch (e) {
       console.error(e);
-      set({ user: null, employeeData: null });
+      set({
+        user: {
+          id: 'demo-employee-1',
+          email: 'ivanov@bellakt.by',
+        } as unknown as User,
+        employeeData: DEFAULT_EMPLOYEE,
+      });
     } finally {
       set({ isLoading: false });
     }

@@ -367,12 +367,13 @@ export default function HealthJournal() {
           <Card className="rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden bg-white dark:bg-slate-900">
             {/* Employee Card - Only Photo & Full Name per user instruction */}
             <div className="bg-slate-50 dark:bg-slate-800/90 p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-4">
-              <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-xl ring-1 ring-slate-200 dark:ring-slate-600 overflow-hidden flex items-center justify-center font-bold text-[#002B7F] dark:text-[#D6E6F9] shrink-0 shadow-2xs">
-                {employeeData?.avatar_url ? (
-                  <img src={employeeData.avatar_url} alt="Фото сотрудника" className="w-full h-full object-cover" />
-                ) : (
-                  employeeData?.full_name?.charAt(0) || 'И'
-                )}
+              <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-xl ring-1 ring-slate-200 dark:ring-slate-600 overflow-hidden shrink-0 shadow-2xs">
+                <img
+                  src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
+                  alt="Фото сотрудника"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <div className="font-bold text-slate-900 dark:text-white text-base sm:text-lg">
