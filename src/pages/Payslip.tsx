@@ -27,6 +27,27 @@ interface PeriodData {
 }
 
 const PAYSLIP_RECORDS: Record<string, PeriodData> = {
+  '2026-10': {
+    periodLabel: 'Октябрь 2026',
+    accrued: 2250.00,
+    deducted: 590.20,
+    toPay: 1659.80,
+    accruals: [
+      { name: 'Оклад по часам и тарифной ставке', amount: 950.00 },
+      { name: 'Премия за качество и выполнение плана (33%)', amount: 313.50 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 142.50 },
+      { name: 'Доплата за работу в ночные смены', amount: 134.00 },
+      { name: 'Контрактная надбавка за сложность', amount: 500.00 },
+      { name: 'Премия к производственному юбилею', amount: 210.00 },
+    ],
+    deductions: [
+      { name: 'Подоходный налог (13%)', amount: 292.50 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 22.50 },
+      { name: 'Профсоюзный взнос (1%)', amount: 22.50 },
+      { name: 'Оказанные услуги', amount: 115.70 },
+      { name: 'Выплаченный плановый аванс', amount: 137.00 },
+    ],
+  },
   '2026-09': {
     periodLabel: 'Сентябрь 2026',
     accrued: 2180.00,
@@ -174,6 +195,7 @@ const PAYSLIP_RECORDS: Record<string, PeriodData> = {
 };
 
 const PERIODS = [
+  { id: '2026-10', label: 'Октябрь 2026' },
   { id: '2026-09', label: 'Сентябрь 2026' },
   { id: '2026-08', label: 'Август 2026' },
   { id: '2026-07', label: 'Июль 2026' },
@@ -184,7 +206,7 @@ const PERIODS = [
 ];
 
 function getEmployeePayslip(employee: any, periodId: string): PeriodData {
-  const baseRecord = PAYSLIP_RECORDS[periodId] || PAYSLIP_RECORDS['2026-09'];
+  const baseRecord = PAYSLIP_RECORDS[periodId] || PAYSLIP_RECORDS['2026-10'];
   if (!employee) return baseRecord;
 
   // Если это Иванов - возвращаем базовый технологический лист
@@ -194,7 +216,7 @@ function getEmployeePayslip(employee: any, periodId: string): PeriodData {
 
   // Ковалева Елена Сергеевна (Мастер смены цеха сухих смесей)
   if (employee.tab_number === '20592') {
-    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    const isLatest = periodId === '2026-10' || periodId === '2026-09';
     return {
       periodLabel: baseRecord.periodLabel,
       accrued: isLatest ? 2380.0 : 2250.0,
@@ -219,7 +241,7 @@ function getEmployeePayslip(employee: any, periodId: string): PeriodData {
 
   // Смирнов Дмитрий Алексеевич (Наладчик линий)
   if (employee.tab_number === '19844') {
-    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    const isLatest = periodId === '2026-10' || periodId === '2026-09';
     return {
       periodLabel: baseRecord.periodLabel,
       accrued: isLatest ? 1920.0 : 1850.0,
@@ -243,7 +265,7 @@ function getEmployeePayslip(employee: any, periodId: string): PeriodData {
 
   // Волкова Анна Михайловна (Врач-терапевт здравпункта)
   if (employee.tab_number === '21105') {
-    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    const isLatest = periodId === '2026-10' || periodId === '2026-09';
     return {
       periodLabel: baseRecord.periodLabel,
       accrued: isLatest ? 1850.0 : 1800.0,
@@ -266,7 +288,7 @@ function getEmployeePayslip(employee: any, periodId: string): PeriodData {
 
   // Григорьев Сергей Николаевич (Водитель логистики)
   if (employee.tab_number === '18732') {
-    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    const isLatest = periodId === '2026-10' || periodId === '2026-09';
     return {
       periodLabel: baseRecord.periodLabel,
       accrued: isLatest ? 1780.0 : 1720.0,
@@ -290,7 +312,7 @@ function getEmployeePayslip(employee: any, periodId: string): PeriodData {
 
   // Павлова Татьяна Викторовна (HR)
   if (employee.tab_number === '17409') {
-    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    const isLatest = periodId === '2026-10' || periodId === '2026-09';
     return {
       periodLabel: baseRecord.periodLabel,
       accrued: isLatest ? 2050.0 : 1980.0,

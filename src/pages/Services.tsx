@@ -58,6 +58,77 @@ interface MonthServicesData {
 }
 
 const MONTH_DATA_RECORDS: Record<string, MonthServicesData> = {
+  '2026-10': {
+    periodId: '2026-10',
+    periodLabel: 'Октябрь 2026',
+    canteenReceipts: [
+      {
+        id: 'ЧЕК-2026-1120',
+        date: '14.10.2026',
+        time: '12:45',
+        items: [
+          { name: 'Борщ с говядиной и сметаной', count: 1, price: 4.90 },
+          { name: 'Котлета мясная «По-волковысски»', count: 1, price: 5.00 },
+          { name: 'Пюре картофельное на молоке', count: 1, price: 1.70 },
+          { name: 'Компот из лесных ягод', count: 1, price: 1.10 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-1102',
+        date: '08.10.2026',
+        time: '12:30',
+        items: [
+          { name: 'Суп гороховый с копченостями', count: 1, price: 4.30 },
+          { name: 'Гуляш из свинины', count: 1, price: 5.60 },
+          { name: 'Макароны отварные с сыром', count: 1, price: 1.50 },
+          { name: 'Салат из свежих овощей', count: 1, price: 1.90 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-1080',
+        date: '02.10.2026',
+        time: '13:00',
+        items: [
+          { name: 'Рассольник ленинградский', count: 1, price: 4.20 },
+          { name: 'Рыба запеченная с овощами', count: 1, price: 5.40 },
+          { name: 'Рис отварной', count: 1, price: 1.40 },
+        ],
+      },
+    ],
+    salaryServices: [
+      {
+        type: 'fok',
+        title: 'ФОК и бассейн',
+        date: '10.10.2026',
+        employeePrice: 35.00,
+        fullPrice: 70.00,
+        subsidy: 35.00,
+        provider: 'ФОК г. Волковыск',
+        description: 'Корпоративный абонемент на 8 посещений бассейна и тренажерного зала',
+      },
+      {
+        type: 'voucher',
+        title: 'Заказ фирменной продукции ОАО «Беллакт»',
+        date: '06.10.2026',
+        employeePrice: 48.50,
+        fullPrice: 97.00,
+        subsidy: 48.50,
+        provider: 'Столовая / Заводской магазин',
+        description: 'Набор молочных сухих смесей и детского питания по льготной цене сотрудника',
+      },
+    ],
+    telecom: {
+      phone: '+375 (29) 782-45-12',
+      plan: 'А1 / МТС (Корпоративный тариф «Беллакт-Завод»)',
+      period: 'Октябрь 2026',
+      includedMinutes: '3000 мин во все сети РБ',
+      usedMinutes: '412 мин',
+      includedInternet: '15 ГБ на неограниченной скорости',
+      usedInternet: '8.4 ГБ',
+      overlimitInternet: '0 ГБ (в пределах пакета)',
+      overlimitAmount: 0.00,
+    },
+  },
   '2026-09': {
     periodId: '2026-09',
     periodLabel: 'Сентябрь 2026',
@@ -559,6 +630,7 @@ const MONTH_DATA_RECORDS: Record<string, MonthServicesData> = {
 };
 
 const PERIODS = [
+  { id: '2026-10', label: 'Октябрь 2026' },
   { id: '2026-09', label: 'Сентябрь 2026' },
   { id: '2026-08', label: 'Август 2026' },
   { id: '2026-07', label: 'Июль 2026' },
@@ -569,12 +641,12 @@ const PERIODS = [
 ];
 
 export default function Services() {
-  const [periodIndex, setPeriodIndex] = useState(0); // 0 = 2026-09 (latest)
+  const [periodIndex, setPeriodIndex] = useState(0); // 0 = 2026-10 (latest)
   const [activeTab, setActiveTab] = useState<'canteen' | 'salary' | 'telecom'>('canteen');
 
   const currentPeriod = PERIODS[periodIndex] || PERIODS[0];
   const currentData =
-    MONTH_DATA_RECORDS[currentPeriod.id] || MONTH_DATA_RECORDS['2026-09'];
+    MONTH_DATA_RECORDS[currentPeriod.id] || MONTH_DATA_RECORDS['2026-10'];
 
   const handlePrevPeriod = () => {
     if (periodIndex < PERIODS.length - 1) {
