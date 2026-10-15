@@ -280,7 +280,7 @@ export default function Notifications() {
   };
 
   return (
-    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-3xl mx-auto space-y-4 sm:space-y-6 pb-12">
+    <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-none mx-auto space-y-5 sm:space-y-6 pb-10">
       {/* Top Bar: Minimal header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
