@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useAuthStore, EMPLOYEES, Employee } from '../../store/useAuthStore';
+import { supabase } from '../../lib/supabase';
 import { useKioskSecurityStore } from '../../store/useKioskSecurityStore';
 import {
   useNavPreferencesStore,
@@ -17,10 +18,22 @@ import {
   Power,
   LogOut,
   Settings,
+  Users,
+  Building,
+  ArrowRight,
+  CheckCircle2,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { OfflineIndicator } from '../OfflineIndicator';
 import { LoadingScreen } from '../LoadingScreen';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '../ui/dialog';
+import { toast } from 'sonner';
 
 function getNavIcon(iconName: string, className: string) {
   switch (iconName) {
@@ -42,10 +55,41 @@ function getNavIcon(iconName: string, className: string) {
 }
 
 export function Layout() {
-  const { user, employeeData, isLoading, logout } = useAuthStore();
+  const { user, employeeData, isLoading, logout, loginAsEmployee } = useAuthStore();
   const { slot1, slot2 } = useNavPreferencesStore();
   const location = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isSwitchUserOpen, setIsSwitchUserOpen] = useState(false);
+  const [employeesList, setEmployeesList] = useState<Employee[]>(EMPLOYEES);
+
+  useEffect(() => {
+    async function loadEmployees() {
+      try {
+        const { data, error } = await supabase.from('employees').select('*').order('full_name');
+        if (!error && data && data.length > 0) {
+          const mapped: Employee[] = data.map((d: any) => ({
+            id: d.id,
+            tab_number: d.tab_number || '00000',
+            full_name: d.full_name,
+            position: d.position || 'Сотрудник предприятия',
+            department: d.department || 'Производство',
+            email: d.email || `${d.tab_number}@bellakt.by`,
+            phone: d.phone || '+375 (29) 000-00-00',
+            password: '123456',
+            role: (d.role as any) || 'employee',
+            avatar_url: d.avatar_url,
+            pass_id: d.pass_id || `BLT-PASS-2026-${d.tab_number}-9812`,
+            shift: d.shift || 'Смена А (07:00 – 15:30)',
+            hire_date: '01.01.2020',
+          }));
+          setEmployeesList(mapped);
+        }
+      } catch (err) {
+        console.warn('Layout: could not fetch employees from Supabase:', err);
+      }
+    }
+    loadEmployees();
+  }, []);
 
   const item1 = ALL_AVAILABLE_NAV_ITEMS[slot1] || ALL_AVAILABLE_NAV_ITEMS.health;
   const item2 = ALL_AVAILABLE_NAV_ITEMS[slot2] || ALL_AVAILABLE_NAV_ITEMS.canteen;
@@ -143,25 +187,42 @@ export function Layout() {
       <header className="w-full max-w-6xl lg:max-w-7xl 2xl:max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 pb-2">
         {/* Top Row: Left Profile Circle | Center Official Logo | Right Settings Circle */}
         <div className="flex items-center justify-between gap-4">
-          {/* Left: Profile Circular Button (Same height as Logo) with Employee Photo */}
-          <Link
-            to="/profile"
-            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 2xl:w-16 2xl:h-16 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-[#002B7F] dark:hover:border-[#60a5fa] hover:shadow-md transition-all flex items-center justify-center shrink-0 group select-none overflow-hidden"
-            title="Личный профиль сотрудника"
-          >
-            {employeeData?.avatar_url || '/ivan_ivanov.jpg' ? (
-              <img
-                src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
-                alt={employeeData?.full_name || 'Иван Иванов'}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              />
-            ) : (
-              <span className="text-[#002B7F] dark:text-[#60a5fa] font-bold text-xs sm:text-sm md:text-base 2xl:text-lg group-hover:scale-105 transition-transform">
-                {initials}
+          {/* Left: Profile Circular Button with Employee Photo + Quick Switcher */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <Link
+              to="/profile"
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 2xl:w-16 2xl:h-16 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-[#002B7F] dark:hover:border-[#60a5fa] hover:shadow-md transition-all flex items-center justify-center shrink-0 group select-none overflow-hidden"
+              title="Личный профиль сотрудника"
+            >
+              {employeeData?.avatar_url || '/ivan_ivanov.jpg' ? (
+                <img
+                  src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
+                  alt={employeeData?.full_name || 'Иван Иванов'}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <span className="text-[#002B7F] dark:text-[#60a5fa] font-bold text-xs sm:text-sm md:text-base 2xl:text-lg group-hover:scale-105 transition-transform">
+                  {initials}
+                </span>
+              )}
+            </Link>
+
+            <div className="flex flex-col text-left">
+              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate max-w-[105px] sm:max-w-[170px] lg:max-w-[210px] leading-tight">
+                {employeeData?.full_name?.split(' ').slice(0, 2).join(' ') || 'Иван Иванов'}
               </span>
-            )}
-          </Link>
+              <button
+                type="button"
+                onClick={() => setIsSwitchUserOpen(true)}
+                className="text-[10px] sm:text-[11px] font-semibold text-[#002B7F] dark:text-sky-400 hover:text-[#0B4DA2] hover:underline flex items-center gap-1 cursor-pointer pt-0.5"
+                title="Сменить активного сотрудника"
+              >
+                <Users className="w-3 h-3 shrink-0" />
+                <span>Сменить</span>
+              </button>
+            </div>
+          </div>
 
           {/* Center: Official Logo */}
           <div className="flex-1 flex justify-center px-2">
@@ -288,6 +349,75 @@ export function Layout() {
           </button>
         </nav>
       </footer>
+
+      {/* Модальное окно быстрого переключения сотрудника */}
+      <Dialog open={isSwitchUserOpen} onOpenChange={setIsSwitchUserOpen}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Building className="w-5 h-5 text-[#002B7F]" />
+              Сотрудники ОАО «Беллакт»
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">
+              Выберите сотрудника для мгновенного переключения профиля
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2.5 pt-2">
+            {employeesList.map((emp) => {
+              const isCurrent = emp.tab_number === employeeData?.tab_number;
+              return (
+                <div
+                  key={emp.id}
+                  onClick={() => {
+                    loginAsEmployee(emp);
+                    setIsSwitchUserOpen(false);
+                    toast.success(`Профиль переключен: ${emp.full_name}`, {
+                      description: `${emp.position} • Таб. № ${emp.tab_number}`,
+                    });
+                  }}
+                  className={cn(
+                    'group p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3',
+                    isCurrent
+                      ? 'border-[#002B7F] bg-[#D6E6F9]/40 dark:bg-blue-950/50'
+                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-[#D6E6F9]/30 dark:hover:bg-slate-800 hover:border-[#002B7F]'
+                  )}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-[#002B7F] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                      {emp.full_name
+                        .split(' ')
+                        .slice(0, 2)
+                        .map((n) => n[0])
+                        .join('')}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-slate-900 dark:text-white truncate flex items-center gap-1.5">
+                        <span>{emp.full_name}</span>
+                        {isCurrent && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#002B7F] text-white font-bold">
+                            Активен
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-[#0B4DA2] dark:text-sky-400 font-medium truncate">
+                        {emp.position}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        {emp.department} • Таб. № {emp.tab_number}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="shrink-0 flex items-center text-xs font-semibold text-[#002B7F] dark:text-sky-300 opacity-90 group-hover:translate-x-0.5 transition-transform">
+                    {isCurrent ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <ArrowRight className="w-3.5 h-3.5" />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

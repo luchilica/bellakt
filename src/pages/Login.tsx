@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuthStore, EMPLOYEES, Employee } from '../store/useAuthStore';
+import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -43,6 +44,36 @@ export default function Login() {
   const [isSelectWorkerOpen, setIsSelectWorkerOpen] = useState(false);
   const [showCredentialsHint, setShowCredentialsHint] = useState(false);
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [employeesList, setEmployeesList] = useState<Employee[]>(EMPLOYEES);
+
+  useEffect(() => {
+    async function loadSupaEmployees() {
+      try {
+        const { data, error } = await supabase.from('employees').select('*').order('full_name');
+        if (!error && data && data.length > 0) {
+          const mapped: Employee[] = data.map((d: any) => ({
+            id: d.id,
+            tab_number: d.tab_number || '00000',
+            full_name: d.full_name,
+            position: d.position || 'Сотрудник предприятия',
+            department: d.department || 'Производство',
+            email: d.email || `${d.tab_number}@bellakt.by`,
+            phone: d.phone || '+375 (29) 000-00-00',
+            password: '123456',
+            role: (d.role as any) || 'employee',
+            avatar_url: d.avatar_url,
+            pass_id: d.pass_id || `BLT-PASS-2026-${d.tab_number}-9812`,
+            shift: d.shift || 'Смена А (07:00 – 15:30)',
+            hire_date: '01.01.2020',
+          }));
+          setEmployeesList(mapped);
+        }
+      } catch (err) {
+        console.warn('Error loading employees from Supabase:', err);
+      }
+    }
+    loadSupaEmployees();
+  }, []);
 
   const {
     register,
@@ -204,7 +235,7 @@ export default function Login() {
               onClick={() => setIsSelectWorkerOpen(true)}
             >
               <Users className="w-4 h-4" />
-              Выбрать профиль сотрудника ({EMPLOYEES.length})
+              Выбрать профиль сотрудника ({employeesList.length})
             </Button>
 
             <Button
@@ -242,7 +273,7 @@ export default function Login() {
                   Все сотрудники зарегистрированы в базе данных и Supabase. Единый пароль по умолчанию: <strong className="text-slate-800 dark:text-slate-200">123456</strong>
                 </p>
                 <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                  {EMPLOYEES.map((emp) => (
+                  {employeesList.map((emp) => (
                     <div
                       key={emp.id}
                       className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 hover:border-blue-400 transition-colors"
@@ -287,7 +318,7 @@ export default function Login() {
           </DialogHeader>
 
           <div className="space-y-2.5 pt-2">
-            {EMPLOYEES.map((emp) => (
+            {employeesList.map((emp) => (
               <div
                 key={emp.id}
                 onClick={() => handleSelectEmployee(emp)}
@@ -348,7 +379,7 @@ export default function Login() {
             className="w-full text-xs"
             onClick={() => {
               setQrModalOpen(false);
-              handleSelectEmployee(EMPLOYEES[0]);
+              handleSelectEmployee(employeesList[0] || EMPLOYEES[0]);
             }}
           >
             Смоделировать прикладывание пропуска (Таб. 20481)
