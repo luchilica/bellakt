@@ -35,7 +35,7 @@ export default function HealthJournal() {
   const [activeTab, setActiveTab] = useState<'today' | 'history'>('today');
 
   // History filtering states
-  const [selectedMonth, setSelectedMonth] = useState<string>('2026-09');
+  const [selectedMonth, setSelectedMonth] = useState<string>('2026-10');
   const [searchDate, setSearchDate] = useState<string>('');
 
   const todayIso = new Date().toISOString().split('T')[0];
@@ -209,6 +209,7 @@ export default function HealthJournal() {
   }, [history, selectedMonth, searchDate]);
 
   const getMonthDisplayName = (monthIso: string) => {
+    if (monthIso === '2026-10') return 'Октябрь 2026';
     if (monthIso === '2026-09') return 'Сентябрь 2026';
     if (monthIso === '2026-08') return 'Август 2026';
     if (monthIso === '2026-07') return 'Июль 2026';
@@ -553,7 +554,8 @@ export default function HealthJournal() {
                   }}
                   className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F] cursor-pointer"
                 >
-                  <option value="2026-09">Сентябрь 2026 (Текущий)</option>
+                  <option value="2026-10">Октябрь 2026 (Текущий)</option>
+                  <option value="2026-09">Сентябрь 2026</option>
                   <option value="2026-08">Август 2026</option>
                   <option value="2026-07">Июль 2026</option>
                   <option value="all">Все месяцы</option>
@@ -587,12 +589,12 @@ export default function HealthJournal() {
               </div>
 
               {/* Reset Filter button */}
-              {(searchDate || selectedMonth !== '2026-09') && (
+              {(searchDate || selectedMonth !== '2026-10') && (
                 <div className="sm:self-end pt-1 sm:pt-0">
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedMonth('2026-09');
+                      setSelectedMonth('2026-10');
                       setSearchDate('');
                     }}
                     className="h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
@@ -614,12 +616,12 @@ export default function HealthJournal() {
                 </p>
                 <button
                   onClick={() => {
-                    setSelectedMonth('2026-09');
+                    setSelectedMonth('2026-10');
                     setSearchDate('');
                   }}
                   className="text-xs font-bold text-[#002B7F] hover:text-[#0B4DA2] dark:text-blue-400 underline cursor-pointer"
                 >
-                  Показать текущий месяц (Сентябрь 2026)
+                  Показать текущий месяц (Октябрь 2026)
                 </button>
               </div>
             ) : (

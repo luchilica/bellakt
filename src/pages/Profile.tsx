@@ -22,8 +22,15 @@ export default function Profile() {
   const position = employeeData?.position || 'Инженер-технолог молочного производства';
   const department = employeeData?.department || 'Цех детского питания №1';
   const email = employeeData?.email || 'ivanov@bellakt.by';
-  const phone = '+375 (29) 782-45-12';
-  const passId = `BLT-PASS-2026-${tabNumber}-9812`;
+  const phone = employeeData?.phone || '+375 (29) 782-45-12';
+  const passId = employeeData?.pass_id || `BLT-PASS-2026-${tabNumber}-9812`;
+
+  const initials = fullName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0])
+    .join('');
 
   return (
     <div id="profile-container" className="w-full max-w-xl sm:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto space-y-5 sm:space-y-6 pb-12">
@@ -53,20 +60,35 @@ export default function Profile() {
         <div id="profile-user-header" className="flex items-center gap-4 sm:gap-6 pb-5 border-b border-slate-100 dark:border-slate-800">
           <div
             id="profile-photo-square"
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/90 shrink-0 shadow-2xs overflow-hidden"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-[#002B7F] text-white flex items-center justify-center font-bold text-2xl sm:text-3xl shrink-0 shadow-2xs overflow-hidden"
           >
-            <img
-              src={employeeData?.avatar_url || '/ivan_ivanov.jpg'}
-              alt={fullName}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
-            />
+            {employeeData?.avatar_url ? (
+              <img
+                src={employeeData.avatar_url}
+                alt={fullName}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              initials
+            )}
           </div>
 
           <div className="min-w-0">
             <h2 id="profile-user-fullname" className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
               {fullName}
             </h2>
+            <div className="text-xs sm:text-sm text-[#0B4DA2] dark:text-blue-400 font-medium mt-1">
+              {position}
+            </div>
+            {employeeData?.shift && (
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {employeeData.shift}
+              </div>
+            )}
           </div>
         </div>
 

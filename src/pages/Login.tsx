@@ -1,29 +1,48 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore, EMPLOYEES, Employee } from '../store/useAuthStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
-import { PWAInstallButton } from '../components/PWAInstallButton';
+import {
+  Loader2,
+  Users,
+  KeyRound,
+  Building,
+  UserCheck,
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  QrCode,
+  ArrowRight,
+} from 'lucide-react';
 import { LoadingScreen } from '../components/LoadingScreen';
 
 const loginSchema = z.object({
-  email: z.string().email('Неверный формат email'),
-  password: z.string().min(6, 'Пароль должен быть не менее 6 символов'),
+  identifier: z.string().min(1, 'Введите email или табельный номер'),
+  password: z.string().min(4, 'Пароль должен быть не менее 4 символов'),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const { user, checkSession, loginAsDemo } = useAuthStore();
+  const { user, loginWithCredentials, loginAsEmployee } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSelectWorkerOpen, setIsSelectWorkerOpen] = useState(false);
+  const [showCredentialsHint, setShowCredentialsHint] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   const {
     register,
@@ -33,7 +52,7 @@ export default function Login() {
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'ivanov@bellakt.by',
+      identifier: 'ivanov@bellakt.by',
       password: '123456',
     },
   });
@@ -49,21 +68,38 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (error) throw error;
-      
-      await checkSession();
-    } catch (error: any) {
-      toast.error('Ошибка авторизации', {
-        description: 'Проверьте логин и пароль',
+      const res = await loginWithCredentials(data.identifier, data.password);
+      if (res.success) {
+        toast.success('Успешный вход в систему', {
+          description: 'Сессия подтверждена корпоративным каталогом «Беллакт»',
+        });
+      } else {
+        toast.error('Ошибка авторизации', {
+          description: res.error || 'Проверьте табельный номер, email и пароль',
+        });
+      }
+    } catch {
+      toast.error('Ошибка связи с сервером', {
+        description: 'Повторите попытку через несколько секунд',
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSelectEmployee = (emp: Employee) => {
+    loginAsEmployee(emp);
+    setIsSelectWorkerOpen(false);
+    toast.success(`Вход выполнен: ${emp.full_name}`, {
+      description: `${emp.position} • ${emp.department}`,
+    });
+  };
+
+  const handleFillCredentials = (emp: Employee) => {
+    setValue('identifier', emp.tab_number);
+    setValue('password', emp.password);
+    setShowCredentialsHint(false);
+    toast.info(`Учетные данные подставлены: Таб. № ${emp.tab_number}`);
   };
 
   return (
@@ -79,34 +115,52 @@ export default function Login() {
             }}
           />
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-          Корпоративный портал сотрудников ОАО «Беллакт»
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-1">
+          Единый корпоративный портал ОАО «Беллакт»
         </p>
+        <span className="text-xs text-slate-500 dark:text-slate-400">
+          г. Волковыск • Производственная безопасность и сервисы сотрудников
+        </span>
       </div>
 
-      <Card className="w-full max-w-md shadow-xl rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <CardHeader className="pb-4 pt-6 text-center">
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Вход в систему</CardTitle>
+      <Card className="w-full max-w-md shadow-xl rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+        <CardHeader className="pb-4 pt-6 text-center border-b border-slate-100 dark:border-slate-800">
+          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Вход в систему
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-500 dark:text-slate-400">
+            Используйте табельный номер или корпоративную почту
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400">Email или табельный номер</Label>
+              <Label
+                htmlFor="identifier"
+                className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400"
+              >
+                Табельный номер или Email
+              </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="ivanov@bellakt.by"
+                id="identifier"
+                type="text"
+                placeholder="20481 или ivanov@bellakt.by"
                 className="rounded-xl h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:ring-[#002B7F]"
-                {...register('email')}
+                {...register('identifier')}
               />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
+              {errors.identifier && (
+                <p className="text-xs text-red-500">{errors.identifier.message}</p>
               )}
             </div>
-            
+
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400">Пароль</Label>
+                <Label
+                  htmlFor="password"
+                  className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-400"
+                >
+                  Пароль
+                </Label>
               </div>
               <Input
                 id="password"
@@ -130,42 +184,177 @@ export default function Login() {
                 'Войти в портал'
               )}
             </Button>
-            
-            <div className="relative my-3">
+
+            <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 dark:text-slate-500">Быстрый доступ</span>
+                <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 dark:text-slate-500">
+                  Быстрый доступ
+                </span>
               </div>
             </div>
 
+            {/* Быстрый вход по выбору сотрудника из базы */}
             <Button
               type="button"
               variant="secondary"
-              className="w-full h-11 rounded-xl text-sm bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 font-semibold cursor-pointer"
-              onClick={() => {
-                loginAsDemo();
-              }}
+              className="w-full h-11 rounded-xl text-sm bg-[#D6E6F9] text-[#002B7F] border border-[#0B4DA2]/20 hover:bg-[#c4dbf7] font-semibold cursor-pointer flex items-center justify-center gap-2"
+              onClick={() => setIsSelectWorkerOpen(true)}
             >
-              ⚡ Быстрый вход (Тестовый сотрудник)
+              <Users className="w-4 h-4" />
+              Выбрать профиль сотрудника ({EMPLOYEES.length})
             </Button>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 rounded-xl text-sm text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
-              onClick={() => {}}
+              className="w-full h-11 rounded-xl text-sm text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-center gap-2"
+              onClick={() => setQrModalOpen(true)}
             >
-              Войти по QR-коду пропуска
+              <QrCode className="w-4 h-4" />
+              Войти по электронному пропуску
             </Button>
           </form>
+
+          {/* Информационный аккордеон с данными для входа */}
+          <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={() => setShowCredentialsHint(!showCredentialsHint)}
+              className="w-full flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 cursor-pointer py-1"
+            >
+              <span className="flex items-center gap-1.5">
+                <KeyRound className="w-3.5 h-3.5 text-[#0B4DA2]" />
+                Учетные данные сотрудников предприятия
+              </span>
+              {showCredentialsHint ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+
+            {showCredentialsHint && (
+              <div className="mt-3 space-y-2.5 text-xs bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 pb-1 border-b border-slate-200 dark:border-slate-700">
+                  Все сотрудники зарегистрированы в базе данных и Supabase. Единый пароль по умолчанию: <strong className="text-slate-800 dark:text-slate-200">123456</strong>
+                </p>
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {EMPLOYEES.map((emp) => (
+                    <div
+                      key={emp.id}
+                      className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 hover:border-blue-400 transition-colors"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="font-semibold text-slate-900 dark:text-white truncate">
+                          {emp.full_name}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          Таб. № {emp.tab_number} • {emp.position}
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs h-7 px-2.5 text-[#002B7F] hover:bg-[#D6E6F9] shrink-0 font-medium"
+                        onClick={() => handleFillCredentials(emp)}
+                      >
+                        Заполнить
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
-      <div className="mt-8 w-full max-w-md">
-        <PWAInstallButton />
-      </div>
+      {/* Диалог выбора профиля сотрудника */}
+      <Dialog open={isSelectWorkerOpen} onOpenChange={setIsSelectWorkerOpen}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Building className="w-5 h-5 text-[#002B7F]" />
+              Сотрудники ОАО «Беллакт»
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">
+              Выберите учетную запись для мгновенного входа в портал или инфокиоск
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2.5 pt-2">
+            {EMPLOYEES.map((emp) => (
+              <div
+                key={emp.id}
+                onClick={() => handleSelectEmployee(emp)}
+                className="group p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-[#002B7F] dark:hover:border-[#0B4DA2] bg-slate-50/60 dark:bg-slate-800/40 hover:bg-[#D6E6F9]/30 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#002B7F] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    {emp.full_name
+                      .split(' ')
+                      .slice(0, 2)
+                      .map((n) => n[0])
+                      .join('')}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      {emp.full_name}
+                    </div>
+                    <div className="text-xs text-[#0B4DA2] dark:text-sky-400 font-medium truncate">
+                      {emp.position}
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                      {emp.department} • Таб. № {emp.tab_number}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center text-xs font-semibold text-[#002B7F] dark:text-sky-300 opacity-90 group-hover:translate-x-0.5 transition-transform">
+                  Войти
+                  <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Модальное окно пропуска */}
+      <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
+        <DialogContent className="max-w-sm text-center rounded-2xl bg-white dark:bg-slate-900">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
+              Вход по пропуску
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Приложите бесконтактный RFID-пропуск к считывателю инфокиоска или отсканируйте QR-код
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 flex flex-col items-center justify-center">
+            <div className="w-40 h-40 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 p-4">
+              <QrCode className="w-20 h-20 text-[#002B7F] dark:text-[#0B4DA2] animate-pulse" />
+              <span className="text-[11px] font-medium text-slate-500 mt-2">
+                Ожидание считывания...
+              </span>
+            </div>
+          </div>
+          <Button
+            variant="secondary"
+            className="w-full text-xs"
+            onClick={() => {
+              setQrModalOpen(false);
+              handleSelectEmployee(EMPLOYEES[0]);
+            }}
+          >
+            Смоделировать прикладывание пропуска (Таб. 20481)
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

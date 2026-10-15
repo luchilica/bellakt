@@ -12,9 +12,6 @@ app.use(express.json({ limit: '1mb' }));
 // 1. КОМПЛЕКСНЫЕ ЗАГОЛОВКИ БЕЗОПАСНОСТИ ДЛЯ ИНФОКИОСКОВ И ВЕБ-ПОРТАЛА
 // ============================================================================
 app.use((req, res, next) => {
-  // Защита от Clickjacking / встраивания во внешние фреймы
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-
   // Защита от MIME-sniffing
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
@@ -24,18 +21,17 @@ app.use((req, res, next) => {
   // Политика передачи реферера (минимизация утечек путей)
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-  // Аппаратная изоляция сенсорных терминалов: запрет доступа к сенсорам и медиа
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
-
-  // Политика безопасности контента (CSP)
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; " +
-    "img-src 'self' https: data: blob:; " +
-    "connect-src 'self' https: wss:; " +
-    "font-src 'self' https: data:; " +
-    "frame-ancestors 'self';"
-  );
+  // Разрешаем встраивание во фреймы студии без конфликтующих заголовков
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; " +
+      "img-src 'self' https: data: blob:; " +
+      "connect-src 'self' https: wss:; " +
+      "font-src 'self' https: data:; " +
+      "frame-ancestors *;"
+    );
+  }
 
   next();
 });
@@ -139,7 +135,10 @@ app.get('/api/security/kiosk-policy', (req, res) => {
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);

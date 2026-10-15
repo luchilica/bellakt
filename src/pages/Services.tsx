@@ -58,6 +58,93 @@ interface MonthServicesData {
 }
 
 const MONTH_DATA_RECORDS: Record<string, MonthServicesData> = {
+  '2026-09': {
+    periodId: '2026-09',
+    periodLabel: 'Сентябрь 2026',
+    canteenReceipts: [
+      {
+        id: 'ЧЕК-2026-1048',
+        date: '29.09.2026',
+        time: '12:40',
+        items: [
+          { name: 'Борщ с говядиной и сметаной', count: 1, price: 4.80 },
+          { name: 'Котлета мясная «По-волковысски»', count: 1, price: 4.90 },
+          { name: 'Пюре картофельное на молоке', count: 1, price: 1.60 },
+          { name: 'Компот из лесных ягод', count: 1, price: 1.00 },
+          { name: 'Хлеб ржано-пшеничный (2 кус.)', count: 1, price: 0.30 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-1022',
+        date: '24.09.2026',
+        time: '12:35',
+        items: [
+          { name: 'Суп куриный с лапшой', count: 1, price: 4.10 },
+          { name: 'Филе хека с сыром «Беллакт»', count: 1, price: 5.20 },
+          { name: 'Каша гречневая с маслом', count: 1, price: 1.40 },
+          { name: 'Салат витаминный', count: 1, price: 1.80 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-0988',
+        date: '18.09.2026',
+        time: '13:05',
+        items: [
+          { name: 'Солянка мясная сборная', count: 1, price: 5.40 },
+          { name: 'Драники картофельные со сметаной', count: 1, price: 4.60 },
+          { name: 'Морс клюквенный', count: 1, price: 1.20 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-0950',
+        date: '11.09.2026',
+        time: '12:45',
+        items: [
+          { name: 'Борщ с говядиной', count: 1, price: 4.80 },
+          { name: 'Сырники из творога «Беллакт»', count: 1, price: 3.20 },
+          { name: 'Компот из ягод', count: 1, price: 1.00 },
+        ],
+      },
+      {
+        id: 'ЧЕК-2026-0912',
+        date: '04.09.2026',
+        time: '12:50',
+        items: [
+          { name: 'Солянка мясная сборная', count: 1, price: 4.80 },
+          { name: 'Котлета мясная', count: 1, price: 4.40 },
+          { name: 'Пюре картофельное', count: 1, price: 1.60 },
+        ],
+      },
+    ],
+    salaryServices: [
+      {
+        type: 'fok',
+        title: 'Услуги ФОКа',
+        date: '16.09.2026',
+        employeePrice: 25.00,
+      },
+      {
+        type: 'voucher',
+        title: 'Оздоровительный абонемент (бассейн и сауна)',
+        date: '08.09.2026',
+        fullPrice: 120.00,
+        subsidy: 95.00,
+        employeePrice: 25.00,
+        provider: 'ФОК ОАО «Беллакт» • Профком предприятия',
+      },
+    ],
+    telecom: {
+      phone: '+375 (29) 782-45-12',
+      plan: 'УП «А1» – Корпоративный безлимит ОАО «Беллакт»',
+      period: 'Сентябрь 2026',
+      includedMinutes: '3000 мин во все сети РБ',
+      usedMinutes: '910 мин',
+      includedInternet: '15 ГБ на неограниченной скорости',
+      usedInternet: '16.2 ГБ',
+      overlimitInternet: '1.2 ГБ сверх корпоративного пакета',
+      overlimitAmount: 2.80,
+    },
+  },
   '2026-08': {
     periodId: '2026-08',
     periodLabel: 'Август 2026',
@@ -472,6 +559,7 @@ const MONTH_DATA_RECORDS: Record<string, MonthServicesData> = {
 };
 
 const PERIODS = [
+  { id: '2026-09', label: 'Сентябрь 2026' },
   { id: '2026-08', label: 'Август 2026' },
   { id: '2026-07', label: 'Июль 2026' },
   { id: '2026-06', label: 'Июнь 2026' },
@@ -481,12 +569,12 @@ const PERIODS = [
 ];
 
 export default function Services() {
-  const [periodIndex, setPeriodIndex] = useState(0); // 0 = 2026-08 (latest)
+  const [periodIndex, setPeriodIndex] = useState(0); // 0 = 2026-09 (latest)
   const [activeTab, setActiveTab] = useState<'canteen' | 'salary' | 'telecom'>('canteen');
 
   const currentPeriod = PERIODS[periodIndex] || PERIODS[0];
   const currentData =
-    MONTH_DATA_RECORDS[currentPeriod.id] || MONTH_DATA_RECORDS['2026-08'];
+    MONTH_DATA_RECORDS[currentPeriod.id] || MONTH_DATA_RECORDS['2026-09'];
 
   const handlePrevPeriod = () => {
     if (periodIndex < PERIODS.length - 1) {

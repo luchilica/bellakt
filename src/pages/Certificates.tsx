@@ -31,21 +31,21 @@ export default function Certificates() {
     {
       id: 'СПР-2026-8812',
       type: 'Справка для предоставления в иные банки',
-      createdAt: '08.09.2026',
+      createdAt: '12.10.2026',
       status: 'processing',
     },
     {
       id: 'СПР-2026-7450',
       type: 'Справка о зарплате (виза) (6 месяцев)',
-      createdAt: '22.08.2026',
-      completedAt: '23.08.2026',
+      createdAt: '28.09.2026',
+      completedAt: '29.09.2026',
       status: 'ready',
     },
     {
       id: 'СПР-2026-6104',
       type: 'Справка о зарплате для магазина (6 месяцев)',
-      createdAt: '14.07.2026',
-      completedAt: '15.07.2026',
+      createdAt: '14.08.2026',
+      completedAt: '15.08.2026',
       status: 'issued',
     },
   ]);

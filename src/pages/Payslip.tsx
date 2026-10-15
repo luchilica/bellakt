@@ -27,6 +27,27 @@ interface PeriodData {
 }
 
 const PAYSLIP_RECORDS: Record<string, PeriodData> = {
+  '2026-09': {
+    periodLabel: 'Сентябрь 2026',
+    accrued: 2180.00,
+    deducted: 574.60,
+    toPay: 1605.40,
+    accruals: [
+      { name: 'Оклад по часам и тарифной ставке', amount: 920.00 },
+      { name: 'Премия за качество и выполнение плана (32%)', amount: 294.40 },
+      { name: 'Надбавка за выслугу лет (15%)', amount: 138.00 },
+      { name: 'Доплата за работу в ночные смены', amount: 127.60 },
+      { name: 'Контрактная надбавка за сложность', amount: 500.00 },
+      { name: 'Премия ко Дню работников пищевой промышленности', amount: 200.00 },
+    ],
+    deductions: [
+      { name: 'Подоходный налог (13%)', amount: 283.40 },
+      { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 21.80 },
+      { name: 'Профсоюзный взнос (1%)', amount: 21.80 },
+      { name: 'Оказанные услуги', amount: 112.60 },
+      { name: 'Выплаченный плановый аванс', amount: 135.00 },
+    ],
+  },
   '2026-08': {
     periodLabel: 'Август 2026',
     accrued: 2150.00,
@@ -153,6 +174,7 @@ const PAYSLIP_RECORDS: Record<string, PeriodData> = {
 };
 
 const PERIODS = [
+  { id: '2026-09', label: 'Сентябрь 2026' },
   { id: '2026-08', label: 'Август 2026' },
   { id: '2026-07', label: 'Июль 2026' },
   { id: '2026-06', label: 'Июнь 2026' },
@@ -161,9 +183,140 @@ const PERIODS = [
   { id: '2026-03', label: 'Март 2026' },
 ];
 
+function getEmployeePayslip(employee: any, periodId: string): PeriodData {
+  const baseRecord = PAYSLIP_RECORDS[periodId] || PAYSLIP_RECORDS['2026-09'];
+  if (!employee) return baseRecord;
+
+  // Если это Иванов - возвращаем базовый технологический лист
+  if (employee.tab_number === '20481') {
+    return baseRecord;
+  }
+
+  // Ковалева Елена Сергеевна (Мастер смены цеха сухих смесей)
+  if (employee.tab_number === '20592') {
+    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    return {
+      periodLabel: baseRecord.periodLabel,
+      accrued: isLatest ? 2380.0 : 2250.0,
+      deducted: isLatest ? 649.0 : 610.0,
+      toPay: isLatest ? 1731.0 : 1640.0,
+      accruals: [
+        { name: 'Оклад мастера производственной смены', amount: 1150.0 },
+        { name: 'Премия за выполнение плана выработки (35%)', amount: 402.5 },
+        { name: 'Надбавка за руководство сменой сушильного комплекса', amount: 280.0 },
+        { name: 'Доплата за вечерние и ночные смены', amount: 147.5 },
+        { name: 'Контрактная надбавка за квалификацию', amount: 400.0 },
+      ],
+      deductions: [
+        { name: 'Подоходный налог (13%)', amount: 309.4 },
+        { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 23.8 },
+        { name: 'Профсоюзный взнос (1%)', amount: 23.8 },
+        { name: 'Услуги заводской столовой', amount: 92.0 },
+        { name: 'Выплаченный плановый аванс', amount: 200.0 },
+      ],
+    };
+  }
+
+  // Смирнов Дмитрий Алексеевич (Наладчик линий)
+  if (employee.tab_number === '19844') {
+    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    return {
+      periodLabel: baseRecord.periodLabel,
+      accrued: isLatest ? 1920.0 : 1850.0,
+      deducted: isLatest ? 523.0 : 502.0,
+      toPay: isLatest ? 1397.0 : 1348.0,
+      accruals: [
+        { name: 'Оклад наладчика 6-го разряда', amount: 980.0 },
+        { name: 'Премия за коэффициент техготовности линий (25%)', amount: 245.0 },
+        { name: 'Надбавка за обслуживание автоматов фасовки Tetra Pak', amount: 195.0 },
+        { name: 'Контрактная надбавка', amount: 500.0 },
+      ],
+      deductions: [
+        { name: 'Подоходный налог (13%)', amount: 249.6 },
+        { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 19.2 },
+        { name: 'Профсоюзный взнос (1%)', amount: 19.2 },
+        { name: 'Питание в столовой', amount: 85.0 },
+        { name: 'Аванс', amount: 150.0 },
+      ],
+    };
+  }
+
+  // Волкова Анна Михайловна (Врач-терапевт здравпункта)
+  if (employee.tab_number === '21105') {
+    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    return {
+      periodLabel: baseRecord.periodLabel,
+      accrued: isLatest ? 1850.0 : 1800.0,
+      deducted: isLatest ? 437.5 : 425.0,
+      toPay: isLatest ? 1412.5 : 1375.0,
+      accruals: [
+        { name: 'Оклад врача здравпункта первой категории', amount: 950.0 },
+        { name: 'Надбавка за медицинский стаж и категорию', amount: 300.0 },
+        { name: 'Премия за сан-профилактическую работу и контроль', amount: 200.0 },
+        { name: 'Контрактная надбавка', amount: 400.0 },
+      ],
+      deductions: [
+        { name: 'Подоходный налог (13%)', amount: 240.5 },
+        { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 18.5 },
+        { name: 'Профсоюзный взнос (1%)', amount: 18.5 },
+        { name: 'Аванс', amount: 160.0 },
+      ],
+    };
+  }
+
+  // Григорьев Сергей Николаевич (Водитель логистики)
+  if (employee.tab_number === '18732') {
+    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    return {
+      periodLabel: baseRecord.periodLabel,
+      accrued: isLatest ? 1780.0 : 1720.0,
+      deducted: isLatest ? 407.0 : 395.0,
+      toPay: isLatest ? 1373.0 : 1325.0,
+      accruals: [
+        { name: 'Оклад водителя молоковоза 1-го класса', amount: 850.0 },
+        { name: 'Надбавка за классность (25%)', amount: 212.5 },
+        { name: 'Надбавка за разъездной характер работы', amount: 267.5 },
+        { name: 'Премия за экономию ГСМ и безаварийность', amount: 150.0 },
+        { name: 'Контрактная надбавка', amount: 300.0 },
+      ],
+      deductions: [
+        { name: 'Подоходный налог (13%)', amount: 231.4 },
+        { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 17.8 },
+        { name: 'Профсоюзный взнос (1%)', amount: 17.8 },
+        { name: 'Аванс', amount: 140.0 },
+      ],
+    };
+  }
+
+  // Павлова Татьяна Викторовна (HR)
+  if (employee.tab_number === '17409') {
+    const isLatest = periodId === '2026-09' || periodId === '2026-08';
+    return {
+      periodLabel: baseRecord.periodLabel,
+      accrued: isLatest ? 2050.0 : 1980.0,
+      deducted: isLatest ? 487.5 : 470.0,
+      toPay: isLatest ? 1562.5 : 1510.0,
+      accruals: [
+        { name: 'Оклад старшего специалиста по персоналу', amount: 1020.0 },
+        { name: 'Премия за KPI комплектования штата (30%)', amount: 330.0 },
+        { name: 'Надбавка за сложность и напряженность', amount: 250.0 },
+        { name: 'Контрактная надбавка', amount: 450.0 },
+      ],
+      deductions: [
+        { name: 'Подоходный налог (13%)', amount: 266.5 },
+        { name: 'Пенсионный взнос в ФСЗН (1%)', amount: 20.5 },
+        { name: 'Профсоюзный взнос (1%)', amount: 20.5 },
+        { name: 'Аванс', amount: 180.0 },
+      ],
+    };
+  }
+
+  return baseRecord;
+}
+
 export default function Payslip() {
   const { employeeData } = useAuthStore();
-  const [periodIndex, setPeriodIndex] = useState(0); // 0 corresponds to 2026-08 (latest)
+  const [periodIndex, setPeriodIndex] = useState(0); // 0 corresponds to 2026-09 (latest)
   const [isPrivacyMode, setIsPrivacyMode] = useState(false);
 
   const corporateEmail = employeeData?.email || 'ivanov@bellakt.by';
@@ -186,8 +339,7 @@ export default function Payslip() {
   };
 
   const currentPeriod = PERIODS[periodIndex] || PERIODS[0];
-  const currentData =
-    PAYSLIP_RECORDS[currentPeriod.id] || PAYSLIP_RECORDS['2026-08'];
+  const currentData = getEmployeePayslip(employeeData, currentPeriod.id);
 
   const formatAmount = (val: number, prefix: string = '') => {
     if (isPrivacyMode) return '•••••• руб.';

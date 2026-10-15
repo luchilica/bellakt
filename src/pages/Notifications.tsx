@@ -42,7 +42,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
     category: 'announcement',
     title: 'Продажа полимерных бочек и древесных отходов',
     subtitle: 'Осуществляется продажа со склада с оплатой за наличный расчет в кассе предприятия',
-    publishDate: '07.09.2026',
+    publishDate: '14.10.2026',
     headerType: 'О Б Ъ Я В Л Е Н И Е',
     bodyPoints: [
       '• БОЧЕК ПОЛИМЕРНЫХ б/у 200 л, стоимость 1 бочки составляет 36 рублей;',
@@ -66,7 +66,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
     category: 'vacancy',
     title: 'Работа по договору подряда в ОАО «Хатьковцы»',
     subtitle: 'Приглашаются сотрудники ОАО «Беллакт» в свободное от основной работы время',
-    publishDate: '07.09.2026',
+    publishDate: '12.10.2026',
     headerType: 'О Б Ъ Я В Л Е Н И Е',
     bodyPoints: [
       'По договору подряда для работы требуются:',
@@ -91,7 +91,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
     category: 'announcement',
     title: 'Продажа ФИНПАКОВ б/у (полимерных ящиков)',
     subtitle: 'Продажа с оплатой за наличный расчет в кассе предприятия',
-    publishDate: '07.09.2026',
+    publishDate: '09.10.2026',
     headerType: 'О Б Ъ Я В Л Е Н И Е',
     bodyPoints: [
       '• ФИНПАКОВ б/у (ящиков полимерных: высота 280 мм, ширина 300 мм, длина 400 мм) в любом количестве;',
@@ -118,7 +118,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
     category: 'vacancy',
     title: 'На постоянную работу требуются сотрудники на производство',
     subtitle: 'Волковысское ОАО «Беллакт» приглашает на работу в основные производственные цеха',
-    publishDate: '07.09.2026',
+    publishDate: '06.10.2026',
     headerType: 'О Б Ъ Я В Л Е Н И Е',
     bodyPoints: [
       '• Подсобные рабочие',
@@ -142,7 +142,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
     category: 'vacancy',
     title: 'Экономист в отдел снабжения',
     subtitle: 'Открыта вакансия в коммерческой дирекции ОАО «Беллакт»',
-    publishDate: '01.09.2026',
+    publishDate: '02.10.2026',
     headerType: 'В А К А Н С И Я',
     bodyPoints: [
       'Обязанности: расчет потребности в материальных ресурсах, контроль поставок, отслеживание складских остатков.',
@@ -161,7 +161,7 @@ const INITIAL_ANNOUNCEMENTS: AnnouncementItem[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'bellakt_announcements_v1';
+const LOCAL_STORAGE_KEY = 'bellakt_announcements_v2';
 const AUTO_SLIDE_INTERVAL = 6000; // 6 seconds
 
 export default function Notifications() {
